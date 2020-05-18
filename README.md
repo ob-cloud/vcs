@@ -1,7 +1,7 @@
 # vms
 
-> Version Management System
-> 版本管理系统
+> Voice Control System
+> 语音控制系统
 
 ## 系统配置
 
