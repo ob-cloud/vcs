@@ -493,7 +493,9 @@ body.dark{
       background-color: $stripe-dark;
     }
   }
-
+  .el-drawer{
+    background-color: $light-dark;
+  }
   // service
   .ui-container{
     background-color: $light-dark;

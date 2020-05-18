@@ -1,10 +1,10 @@
 <template>
-  <div class="ui-container1">
+  <div class="ui-container">
      <el-transfer
       style="text-align: left; display: inline-block"
       v-model="transferValue"
       filterable
-      :titles="['Source', 'Target']"
+      :titles="['未绑定OBOX', '已绑定OBOX']"
       :button-texts="['绑定', '解绑']"
       :format="{
         noChecked: '${total}',
@@ -16,8 +16,6 @@
       }"
       @change="handleChange"
       :data="tableData">
-      <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
-      <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
     </el-transfer>
     <!-- <base-table
       :height="height"
@@ -69,7 +67,7 @@ export default {
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
-      transferValue: [],
+      transferValue: ['33ec1ea281', 'c0ec1ea281'],
       tableData: [],
       columns: []
     }
@@ -158,4 +156,21 @@ export default {
   width: 94%;
   margin: 12px auto;
 }
+.ui-container{
+  text-align: center;
+}
+</style>
+<style lang="scss">
+  .ui-container {
+    .el-transfer-panel{
+      width: 256px;
+    }
+    .el-transfer-panel__body{
+      height: 400px;
+    }
+    .el-transfer-panel__list,
+    .el-transfer-panel__list.is-filterable{
+      height: 346px;
+    }
+  }
 </style>

@@ -1,6 +1,23 @@
 <template>
   <div class="device smart ui-container">
-    <base-table
+    <el-transfer
+      style="text-align: left; display: inline-block"
+      v-model="transferValue"
+      filterable
+      :titles="['未绑定场景', '已绑定场景']"
+      :button-texts="['绑定', '解绑']"
+      :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+      :props="{
+        key: 'scene_number',
+        label: 'scene_name'
+      }"
+      @change="handleChange"
+      :data="tableData">
+    </el-transfer>
+    <!-- <base-table
       :height="height"
       :tableData="tableData"
       :columns="columns"
@@ -18,12 +35,12 @@
           <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
         </template>
       </slot>
-    </base-table>
+    </base-table> -->
   </div>
 </template>
 
 <script>
-import BaseTable from '@/assets/package/table-base'
+// import BaseTable from '@/assets/package/table-base'
 import SceneAPI from '@/api/scene'
 import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 export default {
@@ -42,11 +59,12 @@ export default {
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
+      transferValue: [],
       tableData: [],
       columns: []
     }
   },
-  components: { BaseTable },
+  // components: { BaseTable },
   created () {
     this.columns = this.getColumns()
     this.getSceneList()
@@ -119,6 +137,9 @@ export default {
       this.search.pageNo = PAGINATION_PAGENO
       this.search.pageSize = PAGINATION_PAGESIZE
       this.getSceneList()
+    },
+    handleChange (val) {
+      console.log(val)
     }
   }
 }

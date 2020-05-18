@@ -1,6 +1,23 @@
 <template>
   <div class="ui-container">
-    <base-table
+    <el-transfer
+      style="text-align: left; display: inline-block"
+      v-model="transferValue"
+      filterable
+      :titles="['未绑定红外', '已绑定红外']"
+      :button-texts="['绑定', '解绑']"
+      :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+      :props="{
+        key: 'deviceId',
+        label: 'name'
+      }"
+      @change="handleChange"
+      :data="tableData">
+    </el-transfer>
+    <!-- <base-table
       :height="height"
       :tableData="tableData"
       :columns="columns"
@@ -24,12 +41,12 @@
           <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
         </template>
       </slot>
-    </base-table>
+    </base-table> -->
   </div>
 </template>
 
 <script>
-import BaseTable from '@/assets/package/table-base'
+// import BaseTable from '@/assets/package/table-base'
 import DeviceAPI from '@/api/device'
 import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 const {default: Suit} = require('@/common/suit')
@@ -52,12 +69,13 @@ export default {
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
+      transferValue: [],
       tableData: [],
       columns: [],
       oboxList: []
     }
   },
-  components: { BaseTable },
+  // components: { BaseTable },
   created () {
     this.columns = this.getColumns()
     this.getDeviceList()
@@ -135,6 +153,9 @@ export default {
     handleSearch () {
       this.search.pageNo = PAGINATION_PAGENO
       this.getDeviceList()
+    },
+    handleChange (val) {
+      console.log(val)
     }
   }
 }
