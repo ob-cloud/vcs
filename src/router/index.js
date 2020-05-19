@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 18:10:12
  * @Last Modified by: eamiear
- * @Last Modified time: 2019-12-03 17:22:31
+ * @Last Modified time: 2020-05-19 14:44:54
  */
 
 import Vue from 'vue'
@@ -11,6 +11,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import Storage from '@/common/cache'
 import menuRouters from './modules'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (Storage.getToken()) {
+    store.dispatch('generateNavibarMenu')
     to.path === '/login' ? next({ path: '/' }) : next()
   } else {
     to.path.includes('/login') ? next() : next({ path: '/login' })
