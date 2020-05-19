@@ -1,11 +1,16 @@
 <template>
   <div class="device smart ui-container">
+    <div class="search-bar">
+      <el-input class="inblock" clearable placeholder="输入场景命名规则"></el-input>
+      <el-button class="inblock" type="primary" icon="el-icon-search">查询</el-button>
+    </div>
+
     <el-transfer
-      style="text-align: left; display: inline-block"
+      class="transfer"
       v-model="transferValue"
       filterable
       :titles="['未绑定场景', '已绑定场景']"
-      :button-texts="['绑定', '解绑']"
+      :button-texts="['解绑', '绑定']"
       :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
@@ -148,5 +153,16 @@ export default {
 <style lang="scss" scoped>
 .smart{
   margin: 15px 20px;
+}
+.ui-container{
+  text-align: center;
+}
+.search-bar{
+  text-align: left;
+  margin-left: 8%;
+
+  .inblock.el-input{
+    width: 196px;
+  }
 }
 </style>

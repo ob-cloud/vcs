@@ -1,11 +1,11 @@
 <template>
   <div class="ui-container">
     <el-transfer
-      style="text-align: left; display: inline-block"
+      class="transfer"
       v-model="transferValue"
       filterable
       :titles="['未绑定红外', '已绑定红外']"
-      :button-texts="['绑定', '解绑']"
+      :button-texts="['解绑', '绑定']"
       :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
@@ -165,5 +165,8 @@ export default {
 .smart{
   width: 94%;
   margin: 12px auto;
+}
+.ui-container{
+  text-align: center;
 }
 </style>

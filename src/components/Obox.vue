@@ -1,11 +1,11 @@
 <template>
   <div class="ui-container">
      <el-transfer
-      style="text-align: left; display: inline-block"
+      class="transfer"
       v-model="transferValue"
       filterable
       :titles="['未绑定OBOX', '已绑定OBOX']"
-      :button-texts="['绑定', '解绑']"
+      :button-texts="['解绑', '绑定']"
       :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
@@ -161,16 +161,21 @@ export default {
 }
 </style>
 <style lang="scss">
-  .ui-container {
-    .el-transfer-panel{
-      width: 256px;
-    }
-    .el-transfer-panel__body{
-      height: 400px;
-    }
-    .el-transfer-panel__list,
-    .el-transfer-panel__list.is-filterable{
-      height: 346px;
-    }
+.ui-container {
+  .transfer{
+    text-align: left;
+    display: inline-block;
+    margin-top: 20px;
   }
+  .el-transfer-panel{
+    width: 256px;
+  }
+  .el-transfer-panel__body{
+    height: 400px;
+  }
+  .el-transfer-panel__list,
+  .el-transfer-panel__list.is-filterable{
+    height: 346px;
+  }
+}
 </style>
