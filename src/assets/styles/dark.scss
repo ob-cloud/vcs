@@ -1049,3 +1049,13 @@ body.dark{
     }
   }
 }
+
+// switcher
+
+.switch{
+  .list .item{
+    &:hover{
+      background-color: $stroke-dark;
+    }
+  }
+}
