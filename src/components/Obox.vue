@@ -1,6 +1,7 @@
 <template>
   <div class="ui-container">
      <el-transfer
+      v-loading="tableLoading"
       class="transfer"
       v-model="transferValue"
       filterable
@@ -17,38 +18,11 @@
       @change="handleChange"
       :data="tableData">
     </el-transfer>
-    <!-- <base-table
-      :height="height"
-      :tableData="tableData"
-      :columns="columns"
-      stripe
-      v-loading="tableLoading"
-      :pageTotal="total"
-      :pageSize="search.pageSize"
-      @selection-change="onSelectionChange"
-      @on-current-page-change="onCurrentChange"
-      @on-page-size-change="onSizeChange">
-
-      <slot>
-        <template slot="caption">
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="序列号" v-model="search.obox_serial_id"></el-input>
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="名称" v-model="search.obox_name"></el-input>
-          <el-select clearable class="caption-item" placeholder="全部" v-model="search.obox_status">
-            <el-option label='全部' value=''></el-option>
-            <el-option label='在线' :value='1'></el-option>
-            <el-option label='不在线' :value='0'></el-option>
-          </el-select>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
-        </template>
-      </slot>
-    </base-table> -->
   </div>
 </template>
 
 <script>
-// import BaseTable from '@/assets/package/table-base'
 import OboxAPI from '@/api/obox'
-import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 export default {
   props: {
     height: {
@@ -59,56 +33,18 @@ export default {
   data () {
     return {
       tableLoading: true,
-      tableHeight: 0,
       search: {
-        serialId: '',
-        obox_name: '',
-        obox_status: '',
-        pageNo: PAGINATION_PAGENO,
-        pageSize: PAGINATION_PAGESIZE
       },
-      transferValue: ['33ec1ea281', 'c0ec1ea281'],
-      tableData: [],
-      columns: []
+      transferValue: [],
+      tableData: []
     }
   },
-  // components: { BaseTable },
   created () {
-    this.columns = this.getColumns()
-    this.getOboxList()
-  },
-  computed: {
-    total () {
-      return this.tableData.length || 0
-    }
+    this.getAllOboxListByUser()
+    // this.getAllOboxListByRoom()
   },
   methods: {
-    getColumns () {
-      return [{
-        type: 'selection',
-        align: 'center'
-      }, {
-        label: '序列号',
-        prop: 'obox_serial_id',
-        align: 'center'
-      }, {
-        label: '名称',
-        prop: 'obox_name',
-        align: 'center'
-      }, {
-        label: '版本',
-        prop: 'obox_version',
-        align: 'center'
-      }, {
-        label: '状态',
-        prop: 'obox_status',
-        align: 'center',
-        formatter (val) {
-          return val ? '在线' : '不在线'
-        }
-      }]
-    },
-    getOboxList () {
+    getAllOboxListByUser () {
       this.tableLoading = true
       OboxAPI.getOboxList(this.search).then(resp => {
         if (resp.status === 200) {
@@ -128,24 +64,22 @@ export default {
         this.tableLoading = false
       })
     },
-    onCurrentChange (pageNo) {
-      this.search.pageNo = pageNo
-      this.getOboxList()
+    getAllOboxListByRoom () {
+      OboxAPI.getOboxList().then(res => {
+        if (res.status === 200) {
+          this.transferValue = res.data.oboxs.filters(item => item.obox_serial_id)
+        }
+      })
     },
-    onSizeChange (pageSize) {
-      this.search.pageSize = pageSize
-      this.getOboxList()
+    bindObox (serialIds) {
+
     },
-    onSelectionChange (row) {
-      console.log('selected row ', row)
-      this.$emit('on-selection-change', row)
+    unbindObox (serialIds) {
+
     },
-    handleSearch () {
-      this.search.pageNo = PAGINATION_PAGENO
-      this.getOboxList()
-    },
-    handleChange (val) {
-      console.log(val)
+    handleChange (val, direction) {
+      direction === 'right' ? this.bindObox(val) : this.unbindObox(val)
+      console.log(val, direction)
     }
   }
 }

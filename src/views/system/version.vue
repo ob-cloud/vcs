@@ -20,14 +20,15 @@
         </template>
         <template slot="actionBar">
           <el-button type="primary" icon="obicon obicon-plus-o" @click="dialogVisible = true;">添加房间</el-button>
-          <el-button type="primary" icon="obicon obicon-cloud-upload" @click="dialogVisible = true">导入房间</el-button>
+          <el-button type="primary" icon="obicon obicon-cloud-upload" @click="uploadVisible = true">导入房间</el-button>
         </template>
       </slot>
     </base-table>
     <el-dialog  v-if="dialogVisible" top="10%" width="660px" title="添加房间" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <el-form class="ob-form" ref="room" autoComplete="on" :rules="modelRules" :model="model" label-width="80px" style="width: 90%; margin: 0 auto;">
-        <el-form-item label="房间号" prop="roomNo">
-          <el-input v-model="model.roomNo" placeholder="输入房间号"></el-input>
+      <el-form class="ob-form room" ref="room" autoComplete="on" :rules="modelRules" :model="model" label-width="80px" style="width: 90%; margin: 0 auto;">
+        <i class="obicon obicon-plus-o multiple" style="cursor: pointer;" @click="handlePlusRoom()"></i>
+        <el-form-item label="房间号" prop="roomNo" v-for="(item, index) in model.rooms" :key="index">
+          <el-input v-model="item.roomNo" placeholder="输入房间号"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -46,9 +47,21 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="xiaoduVisible = false">解绑</el-button>
+        <el-button @click="handleUnbindXiaodu()">解绑</el-button>
         <el-button type="primary" @click="handleXiaoduSubmit()">绑定</el-button>
       </span>
+    </el-dialog>
+
+    <el-dialog  v-if="uploadVisible" top="10%" width="660px" title="导入房间" :visible.sync="uploadVisible" :close-on-click-modal="false">
+        <el-upload
+          class="upload-container"
+          drag
+          action="https://jsonplaceholder.typicode.com/posts/"
+          multiple>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传excel文件</div>
+        </el-upload>
     </el-dialog>
 
     <el-drawer
@@ -81,6 +94,15 @@ import Helper from '@/common/helper'
 
 export default {
   data () {
+    const that = this
+    const validateAction = (rule, value, callback) => {
+      const found = that.model.rooms.find(item => !item.roomNo)
+      if (found) {
+        callback(new Error('房间号不能留空'))
+      } else {
+        callback()
+      }
+    }
     return {
       tableLoading: false,
       tableHeight: 0,
@@ -96,10 +118,12 @@ export default {
       // 添加房间
       dialogVisible: false,
       model: {
-        roomNo: '',
+        rooms: [{
+          roomNo: ''
+        }],
       },
       modelRules: {
-        roomNo: [{ required: true, message: '房间号不能为空', trigger: 'blur' }]
+        roomNo: [{ required: true, trigger: 'blur', validator: validateAction}]
       },
       xiaoduVisible: false,
       xiaoduModel: {
@@ -109,6 +133,7 @@ export default {
       xiaoduRules: {
         serialNo: [{ required: true, message: '序列号不能为空', trigger: 'blur' }]
       },
+      uploadVisible: false,
       // 操作
       drawerVisible: false,
       drawerTitle: '',
@@ -131,6 +156,14 @@ export default {
     dialogVisible (val) {
       if (val === false) {
         this.$refs.room.resetFields()
+        this.model.rooms = [{
+          roomNo: ''
+        }]
+      }
+    },
+    xiaoduVisible (val) {
+      if (val === false) {
+        this.$refs.xiaodu.resetFields()
       }
     }
   },
@@ -213,34 +246,58 @@ export default {
       this.search.pageNo = PAGINATION_PAGENO
       this.getVersionList()
     },
+    handlePlusRoom () {
+      this.model.rooms.push({
+        roomNo: ''
+      })
+    },
     handleSubmit () {
       // const that = this
       this.$refs.room.validate(valid => {
         if (valid) {
-          console.log('add room')
+          console.log('add room', this.model.rooms)
         }
+      })
+    },
+    bindXiaodu () {
+      this.xiaoduVisible = false
+    },
+    unbindXiaodu () {
+      this.xiaoduVisible = false
+    },
+    handleUnbindXiaodu () {
+      this.$confirm('确认解绑小度音响？', '确认提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(() => {
+        this.unbindXiaodu()
+      }).catch(() => {
+        console.log('cancel')
       })
     },
     handleXiaoduSubmit () {
       this.$refs.xiaodu.validate(valid => {
         if (valid) {
           console.log('add xiaodu')
+          this.bindXiaodu()
         }
       })
     },
     handleRemove (row) {
-      this.$confirm('确认删除该记录？', '确认提示', {
+      this.$confirm('确认删除房间？', '确认提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.doRemove(row.id)
+        this.delRoom(row.id)
       }).catch(() => {
         console.log('cancel')
       })
     },
-    doRemove (id) {
+    delRoom (id) {
       SystemAPI.deleteVersion(id).then(resp => {
         if (resp.status === 0) {
           this.$message({
@@ -260,9 +317,6 @@ export default {
           message: '服务异常'
         })
       })
-    },
-    handleRelease (row) {
-      console.log('release')
     },
     onDrawerSubmit () {
       if (!this.selection.length) {
@@ -292,6 +346,23 @@ export default {
     position: absolute;
     bottom: 20px;
     right: 20px;
+  }
+  .upload-container{
+    text-align: center;
+    padding: 10px 0;
+
+    .el-upload-dragger{
+      margin: 0 auto;
+    }
+  }
+  .ob-form.room{
+    position: relative;
+  }
+  .multiple{
+    position: absolute;
+    font-size: 24px;
+    right: -36px;
+    top: 6px;
   }
 </style>
 <style lang="scss">

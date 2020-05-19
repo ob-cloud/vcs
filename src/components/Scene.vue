@@ -1,11 +1,16 @@
 <template>
   <div class="device smart ui-container">
     <div class="search-bar">
-      <el-input class="inblock" clearable placeholder="输入场景命名规则"></el-input>
-      <el-button class="inblock" type="primary" icon="el-icon-search">查询</el-button>
+      <el-form class="ob-form" ref="search" autoComplete="on" :rules="searchRules" :model="search">
+        <el-form-item prop="scene_name">
+          <el-input v-model="search.scene_name" class="inblock" clearable placeholder="输入场景命名规则"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button class="inblock" type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
     </div>
 
     <el-transfer
+      v-loading="tableLoading"
       class="transfer"
       v-model="transferValue"
       filterable
@@ -22,32 +27,11 @@
       @change="handleChange"
       :data="tableData">
     </el-transfer>
-    <!-- <base-table
-      :height="height"
-      :tableData="tableData"
-      :columns="columns"
-      stripe
-      v-loading="tableLoading"
-      :pageTotal="total"
-      :pageSize="search.pageSize"
-      @selection-change="onSelectionChange"
-      @on-current-page-change="onCurrentChange"
-      @on-page-size-change="onSizeChange">
-
-      <slot>
-        <template slot="caption">
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="场景名称" v-model="search.scene_name"></el-input>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
-        </template>
-      </slot>
-    </base-table> -->
   </div>
 </template>
 
 <script>
-// import BaseTable from '@/assets/package/table-base'
 import SceneAPI from '@/api/scene'
-import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 export default {
   props: {
     height: {
@@ -57,56 +41,22 @@ export default {
   },
   data () {
     return {
-      tableLoading: true,
-      tableHeight: 0,
+      tableLoading: false,
       search: {
         scene_name: '',
-        pageNo: PAGINATION_PAGENO,
-        pageSize: PAGINATION_PAGESIZE
+      },
+      searchRules: {
+        scene_name: [{ required: true, message: '输入场景命名规则', trigger: 'blur' }]
       },
       transferValue: [],
-      tableData: [],
-      columns: []
+      tableData: []
     }
   },
-  // components: { BaseTable },
   created () {
-    this.columns = this.getColumns()
-    this.getSceneList()
-  },
-  computed: {
-    total () {
-      return this.tableData.length || 0
-    }
+
   },
   methods: {
-    getColumns () {
-      return [{
-        type: 'selection',
-        align: 'center'
-      }, {
-        label: '场景名称',
-        prop: 'scene_name',
-        align: 'center'
-      }, {
-        label: '场景编码',
-        prop: 'scene_number',
-        align: 'center'
-      }, {
-        label: '场景状态',
-        align: 'center',
-        renderBody (h, row) {
-          return (
-            <el-switch
-              value={[false, true][row.scene_status]}
-              active-color='#246CDA'
-              inactive-color='#282A39'>
-            </el-switch>
-          )
-        }
-      }]
-    },
-    getSceneList () {
+    getSceneListByUser () {
       this.tableLoading = true
       SceneAPI.getSceneList(this.search).then(resp => {
         if (resp.status === 200) {
@@ -126,25 +76,29 @@ export default {
         this.tableLoading = false
       })
     },
-    onCurrentChange (pageNo) {
-      this.search.pageNo = pageNo
-      this.getSceneList()
-    },
-    onSizeChange (pageSize) {
-      this.search.pageSize = pageSize
-      this.getSceneList()
-    },
-    onSelectionChange (row) {
-      console.log('selected row ', row)
-      this.$emit('on-selection-change', row)
+    getSceneListByRoom () {
+      SceneAPI.getSceneList(this.search).then(res => {
+        if (res.status === 200) {
+          this.transferValue = res.data.scenes.filters(item => item.scene_number)
+        }
+      })
     },
     handleSearch () {
-      this.search.pageNo = PAGINATION_PAGENO
-      this.search.pageSize = PAGINATION_PAGESIZE
-      this.getSceneList()
+      this.$refs.search.validate(valid => {
+        if (valid) {
+          this.getSceneListByUser()
+        }
+      })
     },
-    handleChange (val) {
-      console.log(val)
+    bindScene (sceneNumbers) {
+
+    },
+    unbindScene (sceneNumbers) {
+
+    },
+    handleChange (val, direction) {
+      direction === 'right' ? this.bindScene(val) : this.unbindScene(val)
+      console.log(val, direction)
     }
   }
 }
@@ -159,8 +113,11 @@ export default {
 }
 .search-bar{
   text-align: left;
-  margin-left: 8%;
+  margin-left: 6%;
 
+  .ob-form{
+    display: inline-block;
+  }
   .inblock.el-input{
     width: 196px;
   }

@@ -1,6 +1,7 @@
 <template>
   <div class="ui-container">
     <el-transfer
+      v-loading="tableLoading"
       class="transfer"
       v-model="transferValue"
       filterable
@@ -17,39 +18,11 @@
       @change="handleChange"
       :data="tableData">
     </el-transfer>
-    <!-- <base-table
-      :height="height"
-      :tableData="tableData"
-      :columns="columns"
-      stripe
-      v-loading="tableLoading"
-      :pageTotal="total"
-      :pageSize="search.pageSize"
-      @selection-change="onSelectionChange"
-      @on-current-page-change="onCurrentChange"
-      @on-page-size-change="onSizeChange">
-      <slot>
-        <template slot="caption">
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="设备序列号" v-model="search.obox_serial_id"></el-input>
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="设备类型" v-model="search.device_type"></el-input>
-          <el-input @keyup.enter.native="handleSearch" class="caption-item" placeholder="设备名称" v-model="search.name"></el-input>
-          <el-select clearable class="caption-item" placeholder="全部状态" v-model="search.online">
-            <el-option label='全部状态' value=''></el-option>
-            <el-option label='在线' :value='true'></el-option>
-            <el-option label='离线' :value='false'></el-option>
-          </el-select>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
-        </template>
-      </slot>
-    </base-table> -->
   </div>
 </template>
 
 <script>
-// import BaseTable from '@/assets/package/table-base'
 import DeviceAPI from '@/api/device'
-import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
-const {default: Suit} = require('@/common/suit')
 export default {
   name: 'wifi',
   props: {
@@ -61,64 +34,16 @@ export default {
   data () {
     return {
       tableLoading: true,
-      search: {
-        deviceId: '',
-        name: '',
-        type: '',
-        online: '',
-        pageNo: PAGINATION_PAGENO,
-        pageSize: PAGINATION_PAGESIZE
-      },
       transferValue: [],
-      tableData: [],
-      columns: [],
-      oboxList: []
+      tableData: []
     }
   },
-  // components: { BaseTable },
   created () {
-    this.columns = this.getColumns()
-    this.getDeviceList()
-  },
-  computed: {
-    total () {
-      return this.tableData.length || 0
-    }
+    this.getWIFIListByUser()
+    // this.getWiFiListByRoom()
   },
   methods: {
-    getColumns () {
-      return [{
-        type: 'selection',
-        align: 'center'
-      }, {
-        label: '设备序号',
-        prop: 'deviceId',
-        align: 'center'
-      }, {
-        label: '设备名称',
-        prop: 'name',
-        align: 'center'
-      }, {
-        label: '设备状态',
-        prop: 'online',
-        align: 'center',
-        formatter (status, row) {
-          return status === false ? '离线' : '在线'
-        }
-      }, {
-        label: '设备类型',
-        prop: 'type',
-        align: 'center',
-        formatter (val) {
-          return Suit.getRootDeviceDescriptor(val)
-        }
-      }, {
-        label: '操作',
-        align: 'center',
-        renderToolBox: this.getToolboxRender
-      }]
-    },
-    getDeviceList () {
+    getWIFIListByUser () {
       this.tableLoading = true
       DeviceAPI.getWifiDeviceList(this.search).then(resp => {
         if (resp.status === 200) {
@@ -138,24 +63,22 @@ export default {
         this.tableLoading = false
       })
     },
-    onCurrentChange (pageNo) {
-      this.search.pageNo = pageNo
-      this.getDeviceList()
+    getWiFiListByRoom () {
+      DeviceAPI.getWifiDeviceList(this.search).then(res => {
+        if (res.status === 200) {
+          this.transferValue = res.data.configs.filters(item => item.deviceId)
+        }
+      })
     },
-    onSizeChange (pageSize) {
-      this.search.pageSize = pageSize
-      this.getDeviceList()
+    bindWifi (deviceIds) {
+
     },
-    onSelectionChange (row) {
-      console.log('selected row ', row)
-      this.$emit('on-selection-change', row)
+    unbindWifi (deviceIds) {
+
     },
-    handleSearch () {
-      this.search.pageNo = PAGINATION_PAGENO
-      this.getDeviceList()
-    },
-    handleChange (val) {
-      console.log(val)
+    handleChange (val, direction) {
+      direction === 'right' ? this.bindWifi(val) : this.unbindWifi(val)
+      console.log(val, direction)
     }
   }
 }
