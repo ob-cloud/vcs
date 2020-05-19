@@ -47,6 +47,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
+        <el-button @click="xiaoduVisible = false">取消</el-button>
         <el-button @click="handleUnbindXiaodu()">解绑</el-button>
         <el-button type="primary" @click="handleXiaoduSubmit()">绑定</el-button>
       </span>
@@ -75,10 +76,10 @@
         <iwifi :height="300" v-else-if="drawerType == 2" @on-selection-change="onSelectionChange"/>
         <iscene :height="300" v-else-if="drawerType == 3" @on-selection-change="onSelectionChange"/>
 
-        <div class="drawer-footer">
+        <!-- <div class="drawer-footer">
           <el-button @click="drawerVisible = false; selection = []">取 消</el-button>
           <el-button type="primary" @click="onDrawerSubmit">确 定</el-button>
-        </div>
+        </div> -->
     </el-drawer>
   </div>
 </template>
