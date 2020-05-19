@@ -48,7 +48,7 @@ export default {
     Helper.windowOnResize(this, () => {
       const winH = document.body.clientHeight
       const navH = 50
-      this.height = winH - navH - (20 * 2) - 58
+      this.height = winH - navH - (20 * 2) - 58 - 5
     })
   },
 }
@@ -67,6 +67,7 @@ export default {
 
   .list{
     padding: 20px;
+    overflow-y: auto;
   }
   .list .item{
     font-size: 14px;
