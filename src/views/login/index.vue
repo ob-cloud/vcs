@@ -33,7 +33,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100%;
-  background: #f0f2f5 url('../../assets/images/background.svg') no-repeat 50%;
+  // background: #f0f2f5 url('../../assets/images/background.svg') no-repeat 50%;
   background-size: 100%;
 }
 .ura-login-container{
