@@ -4,6 +4,7 @@ $dark: #282A39;
 $light-dark: #2F374C;
 $medium-dark: #3A4257;
 $stripe-dark: #2C3449;
+$stroke-dark: #232325;
 // $light-white: #cecece;
 $light-white: #A2AAB5;
 $medium-white: #bcc6d0;
@@ -26,19 +27,26 @@ $yellow: #d8d815;
   background-image: -o-linear-gradient(45deg, $start, $end);
   background-image: -ms-linear-gradient($deg, $start, $end);
   background-image: linear-gradient($deg, $start, $end);
+  // background: linear-gradient(to bottom, #282A39 0%, #2F374C 40%, #3A4257 150%), linear-gradient(to top, #282A39 0%, #3A4257 200%);
+  // background-blend-mode: multiply;
+  // background: linear-gradient(to bottom, #003049 0%, #3F3F3F 40%, #1C1C1C 150%), linear-gradient(to top, #003049 0%, #1d3557 200%);
+  // background-blend-mode: multiply;
+  background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
 }
 
 body.dark{
   background-color: $dark;
+  @include linearGradientBackground()
 }
 .dark{
   // HEADER NAVIBAR
   .app-header{
     // background-image: $blue-gradient;
-    @include linearGradientBackground()
+    @include linearGradientBackground();
+    border-bottom: 1px solid $dark;
   }
   .navbar{
-    text-align: center;
+    text-align: left;
     .el-dialog{
       text-align: left;
     }
@@ -64,7 +72,7 @@ body.dark{
   }
 
   .el-tabs__item{
-    color: $light-white;
+    color: $medium-white;
   }
   .el-tabs__item.is-active{
     color: $white;
@@ -186,9 +194,16 @@ body.dark{
     border-radius: 10px;
   }
   td .cell .el-button{
-    background: transparent;
-    border-color: $light-blue;
+    background: $dark;
+    border-color: $stroke-dark;
     color: $light-blue;
+
+    &:hover{
+      transition: all .2s;
+      // background-color: $stroke-dark;
+      @include linearGradientBackground();
+      border-color: transparent;
+    }
   }
   .el-dropdown-menu .el-table-plus-toolbox__item, .el-table-plus-toolbox_dropdown .el-table-plus-toolbox__item{
     color: $light-white;
@@ -240,7 +255,7 @@ body.dark{
   .el-button{
     background-color: transparent;
     color: $light-blue;
-    border-color: $light-blue;
+    border-color: $dark;
     padding: 10px 20px;
   }
   .el-button--primary{
@@ -268,8 +283,9 @@ body.dark{
   // INPUT
   .el-input__inner{
     background-color: transparent;
-    border-color: $light-blue;
-    color: $light-blue;
+    // @include linearGradientBackground();
+    border-color: $dark;
+    color: $white;
     height: 36px;
     line-height: 36px;
   }
@@ -283,8 +299,8 @@ body.dark{
   }
   .el-input-group__append{
     background-color: transparent;
-    color: $light-blue;
-    border-color: $light-blue;
+    color: $white;
+    border-color: $stroke-dark;
   }
   .el-input.is-disabled .el-input__inner{
     background-color: $dark;
@@ -310,11 +326,12 @@ body.dark{
   .el-pager li{
     min-width: 28.5px;
     border-radius: 4px;
-    border: 1px solid $light-blue;
+    border: 1px solid $stroke-dark;
     margin-right: 5px;
   }
   .el-pager li.active{
-    background-color: $deep-blue;
+    // background-color: $stroke-dark;
+    @include linearGradientBackground();
     color: $light-blue;
   }
   .el-pager li.active + li {
@@ -352,6 +369,37 @@ body.dark{
     .el-dialog__headerbtn .el-dialog__close,
     .el-dialog__body{
       color: $light-white;
+    }
+  }
+
+  .el-drawer{
+    .el-drawer__header{
+      color: $white;
+    }
+  }
+
+  .el-transfer{
+    .el-transfer-panel{
+      color: $white;
+      border-color: $stripe-dark;
+      box-shadow: 0px 0px 5px $stroke-dark;
+    }
+    .el-transfer-panel,
+    .el-transfer-panel__header{
+      background: $stripe-dark;
+    }
+    .el-transfer-panel__header{
+      border-bottom-color: $medium-white;
+    }
+    .el-transfer-panel .el-transfer-panel__header .el-checkbox .el-checkbox__label,
+    .el-transfer-panel__item.el-checkbox{
+      color: $medium-white;
+    }
+  }
+
+  .el-upload{
+    .el-upload-dragger{
+      background-color: initial;
     }
   }
 
@@ -800,7 +848,8 @@ body.dark{
 
   // login
   .ura-login{
-    background-color: $medium-dark!important;
+    // background-color: $medium-dark!important;
+    @include linearGradientBackground();
   }
   .ura-login-container{
     background-color: $stripe-dark!important; // #5D687B!important; // $light-dark!important;
