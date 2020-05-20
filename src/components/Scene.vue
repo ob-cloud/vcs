@@ -16,9 +16,9 @@
     </div>
 
     <el-transfer
-      v-loading="tableLoading"
+      v-loading="tableLoading || bindingLoading"
       class="transfer"
-      v-model="transferValue"
+      :value="transferValue"
       filterable
       :titles="['未绑定场景', '已绑定场景']"
       :button-texts="['解绑', '绑定']"
@@ -53,6 +53,7 @@ export default {
   data () {
     return {
       tableLoading: false,
+      bindingLoading: false,
       search: {
         word: '',
       },
@@ -88,9 +89,10 @@ export default {
       })
     },
     getSceneListByRoom () {
-      SystemAPI.getSceneByRoom().then(res => {
+      SystemAPI.getSceneByRoom(this.id).then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.scenes.filter(item => item.scene_number)
+          this.transferValue = res.data.scenes.map(item => item.scene_number)
+          !this.tableData.length && (this.tableData = res.data.scenes)
         }
       })
     },
@@ -102,10 +104,32 @@ export default {
       })
     },
     bindScene (sceneNumbers) {
-      SystemAPI.bindScene(this.id, sceneNumbers)
+      this.bindingLoading = true
+      SystemAPI.bindScene(this.id, sceneNumbers).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getSceneListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message || '绑定失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     unbindScene (sceneNumbers) {
-      SystemAPI.unbindScene(sceneNumbers.join(','))
+      this.bindingLoading = true
+      SystemAPI.unbindScene(sceneNumbers.join(',')).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getSceneListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message || '解绑失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindScene(currentVal) : this.unbindScene(currentVal)
