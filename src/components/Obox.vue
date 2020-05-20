@@ -1,9 +1,9 @@
 <template>
   <div class="ui-container">
      <el-transfer
-      v-loading="tableLoading"
+      v-loading="tableLoading || bindingLoading"
       class="transfer"
-      v-model="transferValue"
+      :value="transferValue"
       filterable
       :titles="['未绑定OBOX', '已绑定OBOX']"
       :button-texts="['解绑', '绑定']"
@@ -37,7 +37,8 @@ export default {
   },
   data () {
     return {
-      tableLoading: true,
+      tableLoading: false,
+      bindingLoading: false,
       search: {
       },
       transferValue: [],
@@ -70,18 +71,44 @@ export default {
       })
     },
     getAllOboxListByRoom () {
+      this.bindingLoading = true
       SystemAPI.getOboxByRoom(this.id).then(res => {
+        this.bindingLoading = false
         if (res.status === 200) {
           this.transferValue = res.data.oboxes.map(item => item.oboxSerialId)
           console.log(this.transferValue)
         }
+      }).catch(() => {
+        this.bindingLoading = false
       })
     },
     bindObox (serialIds) {
-      SystemAPI.bindObox(this.id, serialIds)
+      this.bindingLoading = true
+      SystemAPI.bindObox(this.id, serialIds).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getAllOboxListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: '绑定失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     unbindObox (serialIds) {
-      SystemAPI.unbindObox(serialIds.join(','))
+      this.bindingLoading = true
+      SystemAPI.unbindObox(serialIds.join(',')).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getAllOboxListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: '解绑失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindObox(currentVal) : this.unbindObox(currentVal)
