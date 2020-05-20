@@ -56,8 +56,12 @@
         <el-upload
           class="upload-container"
           drag
-          action="https://jsonplaceholder.typicode.com/posts/"
-          multiple>
+          :data="uploadData"
+          accept=".xlsx,.xls"
+          :before-upload="onBeforeUpload"
+          :on-success="onUploadSuccess"
+          :on-error="onUploadFail"
+          action="/consumer/PmsForDur/upLoadExcel">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传excel文件</div>
@@ -91,6 +95,9 @@ import iscene from '../../components/Scene'
 import SystemAPI from '@/api/system'
 import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 import Helper from '@/common/helper'
+import {
+  mapGetters
+} from 'vuex'
 
 export default {
   data () {
@@ -133,6 +140,9 @@ export default {
         serialNo: [{ required: true, message: '序列号不能为空', trigger: 'blur' }]
       },
       uploadVisible: false,
+      uploadData: {
+        access_token: ''
+      },
       // 操作
       drawerVisible: false,
       drawerTitle: '',
@@ -150,6 +160,9 @@ export default {
     layoutHeight () {
       return this.tableHeight + 180
     },
+    ...mapGetters([
+      'token'
+    ]),
   },
   watch: {
     dialogVisible (val) {
@@ -167,6 +180,7 @@ export default {
     }
   },
   mounted () {
+    this.uploadData.access_token = this.token
     Helper.windowOnResize(this, this.fixLayout)
   },
   methods: {
@@ -246,6 +260,27 @@ export default {
     },
     onSelectionChange (row) {
       this.selection = row || []
+    },
+    onBeforeUpload (file) {
+
+    },
+    onUploadSuccess (response, file, fileList) {
+      if (response.status === 200) {
+        this.$message({
+          type: 'success',
+          message: '解析成功'
+        })
+        this.uploadVisible = false
+        this.getVersionList()
+      } else {
+        this.$message({
+          type: 'error',
+          message: '解析失败'
+        })
+      }
+    },
+    onUploadFail (response, file, fileList) {
+      console.log('error ', response)
     },
     handleSearch () {
       this.search.pageNo = PAGINATION_PAGENO
@@ -349,14 +384,14 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.delRoom(row.id)
+        this.delRoom(row.location)
       }).catch(() => {
         console.log('cancel')
       })
     },
-    delRoom (id) {
-      SystemAPI.deleteVersion(id).then(resp => {
-        if (resp.status === 0) {
+    delRoom (locatoin) {
+      SystemAPI.delRoom(locatoin).then(resp => {
+        if (resp.status === 200) {
           this.$message({
             type: 'success',
             message: '删除成功'
