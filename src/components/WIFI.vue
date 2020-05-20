@@ -1,9 +1,9 @@
 <template>
   <div class="ui-container">
     <el-transfer
-      v-loading="tableLoading"
+      v-loading="tableLoading || bindingLoading"
       class="transfer"
-      v-model="transferValue"
+      :value="transferValue"
       filterable
       :titles="['未绑定红外', '已绑定红外']"
       :button-texts="['解绑', '绑定']"
@@ -38,7 +38,8 @@ export default {
   },
   data () {
     return {
-      tableLoading: true,
+      tableLoading: false,
+      bindingLoading: false,
       transferValue: [],
       tableData: []
     }
@@ -71,15 +72,37 @@ export default {
     getWiFiListByRoom () {
       SystemAPI.getWifiByRoom(this.id).then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.wifi.filter(item => item.deviceId)
+          this.transferValue = res.data.wifi.map(item => item.deviceId)
         }
       })
     },
     bindWifi (deviceIds) {
-      SystemAPI.bindWifi(this.id, deviceIds)
+      this.bindingLoading = true
+      SystemAPI.bindWifi(this.id, deviceIds).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getWiFiListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message || '绑定失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     unbindWifi (deviceIds) {
-      SystemAPI.unbindWifi(deviceIds.join(','))
+      this.bindingLoading = true
+      SystemAPI.unbindWifi(deviceIds.join(',')).then(res => {
+        this.bindingLoading = false
+        if (res.status === 200) {
+          this.getWiFiListByRoom()
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.message || '解绑失败'
+          })
+        }
+      }).catch(() => { this.bindingLoading = false })
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindWifi(currentVal) : this.unbindWifi(currentVal)
