@@ -108,7 +108,7 @@ export default {
       tableHeight: 0,
       total: 0,
       search: {
-        room: '',
+        // room: '',
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
@@ -174,6 +174,11 @@ export default {
       this.tableHeight = Helper.calculateTableHeight() - 20 - 10
     },
     getColumns () {
+      //   {
+      //   type: 'selection',
+      //   width: 80,
+      //   align: 'center'
+      // },
       return [{
         label: '房间号',
         prop: 'room',
@@ -276,10 +281,46 @@ export default {
       })
     },
     bindXiaodu () {
-      this.xiaoduVisible = false
+      SystemAPI.bindXiaodu(this.xiaoduModel.roomNo, this.xiaoduModel.serialNo).then(res => {
+        if (res.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '绑定成功'
+          })
+          this.xiaoduVisible = false
+        }else {
+          this.$message({
+            type: 'error',
+            message: '绑定失败'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '服务异常'
+        })
+      })
     },
     unbindXiaodu () {
-      this.xiaoduVisible = false
+      SystemAPI.unbindXiaodu(this.xiaoduModel.serialNo).then(res => {
+        if (res.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '解绑成功'
+          })
+          this.xiaoduVisible = false
+        }else {
+          this.$message({
+            type: 'error',
+            message: '解绑失败'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '服务异常'
+        })
+      })
     },
     handleUnbindXiaodu () {
       this.$confirm('确认解绑小度音响？', '确认提示', {

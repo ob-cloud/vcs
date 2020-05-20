@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 14:47:54
+ * @Last Modified time: 2020-05-20 15:56:07
  */
 
 import {request} from '@/common/request'
@@ -24,8 +24,13 @@ const SystemAPI = {
       roomList
     })
   },
-  getRoomList () {
-    return request.get('/consumer/PmsForDur/getLocation')
+  delRoom () {
+    return request.delete('/consumer/PmsForDur/delLocation', {
+      location
+    })
+  },
+  getRoomList (params) {
+    return request.get('/consumer/PmsForDur/getLocation', params)
   },
   getOboxByRoom (location) {
     return request.get('/consumer/PmsForDur/location/getObox', {
@@ -92,6 +97,17 @@ const SystemAPI = {
   unbindScene (sceneNumber) {
     return request.delete('/consumer/PmsForDur/unLinkScene', {
       sceneNumber
+    })
+  },
+  bindXiaodu (location, serialIds) {
+    return request.post('/consumer/PmsForDur/bindDure', {
+      location,
+      serialIds
+    })
+  },
+  unbindXiaodu (serialId) {
+    return request.delete('/consumer/PmsForDur/unLinkDure', {
+      serialId
     })
   },
   getVersionList (firmware = {}) {
