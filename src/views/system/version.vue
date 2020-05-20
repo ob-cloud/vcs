@@ -223,6 +223,11 @@ export default {
         }
         this.tableLoading = false
       }).catch(err => {
+        this.$message({
+          title: '失败',
+          message: err.message || '服务出错',
+          type: 'error'
+        })
         this.tableLoading = false
       })
     },
