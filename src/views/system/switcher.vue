@@ -1,33 +1,48 @@
 <template>
-  <el-row :gutter="10" class="switch">
-    <el-col :xs="4" :sm="5" :md="5" :lg="5" :xl="5">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>开关序列号</span>
-          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSerialIds()"></el-button>
-        </div>
-        <div class="list" :style="{height: height + 'px'}" v-loading="loading">
-          <div class="item" :class="{active: item.id === clickedSerial}" v-for="(item, key) in switchSerials" :key="key" @click="handleSerial(item.id)">
-            <i class="icon obicon obicon-switch-btn"></i>{{ item.id }}
+  <div>
+    <el-row :gutter="10" class="switch">
+      <el-col :xs="4" :sm="5" :md="5" :lg="5" :xl="5">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>开关序列号</span>
+            <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSerialIds()"></el-button>
           </div>
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :xs="10" :sm="14" :md="19" :lg="19" :xl="19">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>灯开关子健</span>
-          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
-        </div>
-        <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
-          <div class="sub item">
-            <p><i class="obicon obicon-switch-btn"></i></p>
-            <span>name</span>
+          <div class="list" :style="{height: height + 'px'}" v-loading="loading">
+            <div class="item" :class="{active: item.id === clickedSerial}" v-for="(item, key) in switchSerials" :key="key" @click="handleSerial(item.id)">
+              <i class="icon obicon obicon-switch-btn"></i>{{ item.id }}
+            </div>
           </div>
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
+        </el-card>
+      </el-col>
+      <el-col :xs="10" :sm="14" :md="19" :lg="19" :xl="19">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>灯开关子健</span>
+            <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
+          </div>
+          <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
+            <div class="sub item" v-for="(item, key) in subSwitchList" :key="key" @click="handleEdit(item)">
+              <i class="obicon obicon-edit-o edit" title="编辑" @click.prevent="handleEdit(item)"></i>
+              <p><i class="obicon obicon-switch-btn"></i></p>
+              <span>{{item.name}}</span>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-dialog title="修改名称" width="600px" :visible.sync="dialogVisible" :close-on-click-modal="false">
+      <el-form autoComplete="on" :rules="editRules" :model="model"  ref="edit" label-position="right" label-width="18%">
+        <el-form-item label="名称:" prop="name">
+          <el-input class="filter-item" placeholder="输入名称" v-model="model.name">
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer text-center" >
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" :loading="loading" @click="rename()">确 认</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -41,7 +56,14 @@ export default {
       switchSerials: [],
       subSwitchList: [],
       clickedSerial: '',
-      active: 'active'
+      active: 'active',
+      dialogVisible: false,
+      model: {
+        name: ''
+      },
+      editRules: {
+        name: [{ required: true, trigger: 'blur', message: '名称不能为空' }]
+      }
     }
   },
   mounted () {
@@ -74,7 +96,22 @@ export default {
     getSubSwitchsBySerialId (serialId) {
       this.subloading = true
       setTimeout(() => {
-        this.subSwitchList = []
+        this.subSwitchList = [{
+          id: 'm123445a',
+          name: '开关1'
+        }, {
+          id: 'm123445b',
+          name: '开关2'
+        }, {
+          id: 'm123445c',
+          name: '开关3'
+        }, {
+          id: 'm123445d',
+          name: '开关4'
+        }, {
+          id: 'm123445e',
+          name: '开关5'
+        }]
         this.subloading = false
       }, 1500)
     },
@@ -84,6 +121,14 @@ export default {
     handleSerial (serialId) {
       this.clickedSerial = serialId
       this.getSubSwitchsBySerialId(serialId)
+    },
+    handleEdit (item) {
+      this.dialogVisible = true
+      this.model.name = item.name
+    },
+    rename () {
+      this.$refs.edit.validate(valid => {
+      })
     }
   },
 }
@@ -112,13 +157,32 @@ export default {
     cursor: pointer;
   }
   .list .sub.item{
-    width: 110px;
-    border: 1px solid #000;
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    padding: 20px;
+    margin: 15px;
+    border: 1px solid;
+    border-radius: 4px;
     text-align: center;
     cursor: default;
-
+    &:hover{
+      i{
+        opacity: 1;
+      }
+    }
     i{
       font-size: 60px;
+      opacity: .6;
+    }
+    i.edit{
+      font-size: 14px;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      padding: 5px;
+      cursor: pointer;
+      opacity: .6;
     }
   }
 }
