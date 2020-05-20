@@ -91,7 +91,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '绑定失败'
+            message: res.message || '绑定失败'
           })
         }
       }).catch(() => { this.bindingLoading = false })
@@ -105,7 +105,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '解绑失败'
+            message: res.message || '解绑失败'
           })
         }
       }).catch(() => { this.bindingLoading = false })
