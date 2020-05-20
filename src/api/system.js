@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 14:18:39
+ * @Last Modified time: 2020-05-20 14:47:54
  */
 
 import {request} from '@/common/request'
@@ -18,6 +18,11 @@ const SystemAPI = {
   },
   logout (accessToken) {
     return request.delete('/oauth/token/' + accessToken)
+  },
+  addRoom (roomList) {
+    return request.post('/consumer/PmsForDur/addLocation', {
+      roomList
+    })
   },
   getRoomList () {
     return request.get('/consumer/PmsForDur/getLocation')

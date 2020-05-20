@@ -225,7 +225,7 @@ export default {
       }).catch(err => {
         this.$message({
           title: '失败',
-          message: err.message || '服务出错',
+          message: '服务出错',
           type: 'error'
         })
         this.tableLoading = false
@@ -255,7 +255,23 @@ export default {
       // const that = this
       this.$refs.room.validate(valid => {
         if (valid) {
-          console.log('add room', this.model.rooms)
+          const roomList = this.model.rooms.map(item => item.roomNo)
+          SystemAPI.addRoom(roomList).then(res => {
+            if (res.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '添加成功'
+              })
+              this.getVersionList()
+              this.dialogVisible = false
+            } else {
+              this.$message({
+                type: 'error',
+                message: '添加失败'
+              })
+            }
+          })
+          console.log('add room', roomList)
         }
       })
     },
