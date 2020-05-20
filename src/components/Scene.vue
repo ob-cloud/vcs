@@ -4,8 +4,8 @@
       <el-row :gutter="10">
         <el-col :xs="20" :sm="24" :md="20" :lg="20" :xl="12">
             <el-form class="ob-form" ref="search" autoComplete="on" :rules="searchRules" :model="search">
-              <el-form-item prop="scene_name">
-                <el-input v-model="search.scene_name" class="inblock" clearable placeholder="输入场景命名规则"></el-input>
+              <el-form-item prop="word">
+                <el-input v-model="search.word" class="inblock" clearable placeholder="输入场景命名规则"></el-input>
               </el-form-item>
             </el-form>
             <el-button class="inblock" type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
@@ -54,22 +54,22 @@ export default {
     return {
       tableLoading: false,
       search: {
-        scene_name: '',
+        word: '',
       },
       searchRules: {
-        scene_name: [{ required: true, message: '输入场景命名规则', trigger: 'blur' }]
+        word: [{ required: true, message: '输入场景命名规则', trigger: 'blur' }]
       },
       transferValue: [],
       tableData: []
     }
   },
   created () {
-
+    this.getSceneListByRoom()
   },
   methods: {
     getSceneListByUser () {
       this.tableLoading = true
-      SystemAPI.getSceneByUser().then(resp => {
+      SystemAPI.getSceneByUser(this.search.word).then(resp => {
         if (resp.status === 200) {
           this.tableData = resp.data.scenes
         } else {
@@ -102,10 +102,10 @@ export default {
       })
     },
     bindScene (sceneNumbers) {
-
+      SystemAPI.bindScene(this.id, sceneNumbers)
     },
     unbindScene (sceneNumbers) {
-
+      SystemAPI.unbindScene(sceneNumbers.join(','))
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindScene(currentVal) : this.unbindScene(currentVal)
