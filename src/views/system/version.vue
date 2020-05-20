@@ -84,6 +84,16 @@
           <el-button type="primary" @click="onDrawerSubmit">确 定</el-button>
         </div> -->
     </el-drawer>
+
+    <!-- view  -->
+    <el-drawer
+      ref="drawer"
+      title="房间设备详情"
+      :visible.sync="drawerViewVisible"
+      direction="btt"
+      size="60%">
+        <ideviceinfo></ideviceinfo>
+    </el-drawer>
   </div>
 </template>
 
@@ -92,6 +102,7 @@ import BaseTable from '@/assets/package/table-base'
 import iobox from '../../components/Obox'
 import iwifi from '../../components/WIFI'
 import iscene from '../../components/Scene'
+import ideviceinfo from '../../components/DeviceInfo'
 import SystemAPI from '@/api/system'
 import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 import Helper from '@/common/helper'
@@ -148,10 +159,11 @@ export default {
       drawerTitle: '',
       drawerId: '',
       drawerType: '',
-      selection: []
+      selection: [],
+      drawerViewVisible: false
     }
   },
-  components: { BaseTable, iobox, iwifi, iscene },
+  components: { BaseTable, iobox, iwifi, iscene, ideviceinfo },
   created () {
     this.columns = this.getColumns()
     this.getVersionList()
@@ -201,11 +213,13 @@ export default {
         label: '楼栋',
         prop: 'building',
         align: 'center'
-      }, {
-        label: '层',
-        prop: 'layer',
-        align: 'center'
-      }, {
+      },
+      // {
+      //   label: '层',
+      //   prop: 'layer',
+      //   align: 'center'
+      // },
+      {
         label: '更新时间',
         prop: 'lastOpTime',
         align: 'center',
@@ -221,11 +235,13 @@ export default {
     },
     getToolboxRender (h, row) {
       const toolbox = []
+      // const view = <el-button class="colors" size="tiny" icon="obicon obicon-eye" title='查看' onClick={() => { this.drawerViewVisible = true }}></el-button>
       const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定OBOX'; this.drawerId = row.location; this.drawerType = 1 }}></el-button>
       const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定红外'; this.drawerId = row.location; this.drawerType = 2 }}></el-button>
       const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定云端场景'; this.drawerId = row.location; this.drawerType = 3 }}></el-button>
       const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room }}></el-button>
       const remove = <el-button class="colors" size="tiny" icon="obicon obicon-trash" title='删除房间' onClick={() => this.handleRemove(row)}></el-button>
+      // toolbox.push(view)
       toolbox.push(obox)
       toolbox.push(wifi)
       toolbox.push(scene)
