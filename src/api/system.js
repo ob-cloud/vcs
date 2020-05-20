@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 15:56:07
+ * @Last Modified time: 2020-05-20 16:24:48
  */
 
 import {request} from '@/common/request'
@@ -24,7 +24,7 @@ const SystemAPI = {
       roomList
     })
   },
-  delRoom () {
+  delRoom (location) {
     return request.delete('/consumer/PmsForDur/delLocation', {
       location
     })
@@ -82,8 +82,9 @@ const SystemAPI = {
       pageSize: 10000
     })
   },
-  getSceneByUser () {
+  getSceneByUser (word) {
     return request.get('/consumer/PmsForDur/getScene', {
+      word,
       pageNo: 1,
       pageSize: 10000
     })
