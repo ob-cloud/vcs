@@ -77,10 +77,10 @@ export default {
       })
     },
     bindObox (serialIds) {
-
+      SystemAPI.bindObox(this.id, serialIds)
     },
     unbindObox (serialIds) {
-
+      SystemAPI.unbindObox(serialIds.join(','))
     },
     handleChange (val, direction) {
       direction === 'right' ? this.bindObox(val) : this.unbindObox(val)
