@@ -1059,4 +1059,15 @@ body.dark{
       background-color: $stroke-dark;
     }
   }
+  .list .sub.item{
+    box-shadow: 1px 1px 2px $stroke-dark;
+    border-color: $stroke-dark!important;
+
+    i{
+      color: #0FFF;
+    }
+    i.edit{
+      color: $light-blue;
+    }
+  }
 }
