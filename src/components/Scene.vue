@@ -107,9 +107,9 @@ export default {
     unbindScene (sceneNumbers) {
 
     },
-    handleChange (val, direction) {
-      direction === 'right' ? this.bindScene(val) : this.unbindScene(val)
-      console.log(val, direction)
+    handleChange (val, direction, currentVal) {
+      direction === 'right' ? this.bindScene(currentVal) : this.unbindScene(currentVal)
+      console.log(currentVal, direction)
     }
   }
 }

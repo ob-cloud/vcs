@@ -81,9 +81,9 @@ export default {
     unbindWifi (deviceIds) {
       SystemAPI.unbindWifi(deviceIds.join(','))
     },
-    handleChange (val, direction) {
-      direction === 'right' ? this.bindWifi(val) : this.unbindWifi(val)
-      console.log(val, direction)
+    handleChange (val, direction, currentVal) {
+      direction === 'right' ? this.bindWifi(currentVal) : this.unbindWifi(currentVal)
+      console.log(currentVal, direction)
     }
   }
 }

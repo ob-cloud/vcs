@@ -72,7 +72,8 @@ export default {
     getAllOboxListByRoom () {
       SystemAPI.getOboxByRoom(this.id).then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.oboxes.filter(item => item.obox_serial_id)
+          this.transferValue = res.data.oboxes.map(item => item.oboxSerialId)
+          console.log(this.transferValue)
         }
       })
     },
@@ -82,9 +83,9 @@ export default {
     unbindObox (serialIds) {
       SystemAPI.unbindObox(serialIds.join(','))
     },
-    handleChange (val, direction) {
-      direction === 'right' ? this.bindObox(val) : this.unbindObox(val)
-      console.log(val, direction)
+    handleChange (val, direction, currentVal) {
+      direction === 'right' ? this.bindObox(currentVal) : this.unbindObox(currentVal)
+      console.log(currentVal)
     }
   }
 }
