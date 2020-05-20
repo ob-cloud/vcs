@@ -83,7 +83,8 @@ export default {
       })
     },
     rename () {
-
+      this.$refs.rename.validate(valid => {
+      })
     }
   }
 }
