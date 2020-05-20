@@ -1054,6 +1054,7 @@ body.dark{
 
 .switch{
   .list .item{
+    &.active,
     &:hover{
       background-color: $stroke-dark;
     }
