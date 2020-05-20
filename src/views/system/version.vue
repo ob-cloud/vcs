@@ -14,8 +14,7 @@
 
       <slot>
         <template slot="caption">
-          <el-input clearable @keyup.enter.native="handleSearch" class="caption-item" placeholder="输入房间号" v-model="search.materialNo"></el-input>
-          <el-input clearable @keyup.enter.native="handleSearch" class="caption-item" placeholder="输入版本" v-model="search.versionNo"></el-input>
+          <el-input clearable @keyup.enter.native="handleSearch" class="caption-item" placeholder="输入房间号" v-model="search.room"></el-input>
           <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
         </template>
         <template slot="actionBar">
@@ -72,9 +71,9 @@
       direction="rtl"
       size="60%"
       @closed="selection = []">
-        <iobox :height="300" v-if="drawerType == 1" @on-selection-change="onSelectionChange"/>
-        <iwifi :height="300" v-else-if="drawerType == 2" @on-selection-change="onSelectionChange"/>
-        <iscene :height="300" v-else-if="drawerType == 3" @on-selection-change="onSelectionChange"/>
+        <iobox :height="300" v-if="drawerType == 1" :id="drawerId" @on-selection-change="onSelectionChange"/>
+        <iwifi :height="300" v-else-if="drawerType == 2" :id="drawerId" @on-selection-change="onSelectionChange"/>
+        <iscene :height="300" v-else-if="drawerType == 3" :id="drawerId" @on-selection-change="onSelectionChange"/>
 
         <!-- <div class="drawer-footer">
           <el-button @click="drawerVisible = false; selection = []">取 消</el-button>
@@ -109,8 +108,7 @@ export default {
       tableHeight: 0,
       total: 0,
       search: {
-        materialNo: '',
-        versionNo: '',
+        room: '',
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
@@ -178,23 +176,19 @@ export default {
     getColumns () {
       return [{
         label: '房间号',
-        prop: 'materialNo',
+        prop: 'room',
         align: 'center'
       }, {
-        label: '版本',
-        prop: 'versionNo',
+        label: '楼栋',
+        prop: 'building',
         align: 'center'
       }, {
-        label: '描述',
-        prop: 'log',
+        label: '层',
+        prop: 'layer',
         align: 'center'
       }, {
-        label: '状态',
-        prop: 'status',
-        align: 'center'
-      }, {
-        label: '上传时间',
-        prop: 'optTime',
+        label: '更新时间',
+        prop: 'lastOpTime',
         align: 'center',
         formatter (val) {
           return val && Helper.parseTime(val)
@@ -208,10 +202,10 @@ export default {
     },
     getToolboxRender (h, row) {
       const toolbox = []
-      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定OBOX'; this.drawerId = row.id; this.drawerType = 1 }}></el-button>
-      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定红外'; this.drawerId = row.id; this.drawerType = 2 }}></el-button>
-      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定云端场景'; this.drawerId = row.id; this.drawerType = 3 }}></el-button>
-      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.id }}></el-button>
+      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定OBOX'; this.drawerId = row.location; this.drawerType = 1 }}></el-button>
+      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定红外'; this.drawerId = row.location; this.drawerType = 2 }}></el-button>
+      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定云端场景'; this.drawerId = row.location; this.drawerType = 3 }}></el-button>
+      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room }}></el-button>
       const remove = <el-button class="colors" size="tiny" icon="obicon obicon-trash" title='删除房间' onClick={() => this.handleRemove(row)}></el-button>
       toolbox.push(obox)
       toolbox.push(wifi)
@@ -222,9 +216,9 @@ export default {
     },
     getVersionList () {
       this.tableLoading = true
-      SystemAPI.getVersionList(this.search).then(resp => {
-        if (resp.status === 0) {
-          this.tableData = resp.data.firmware
+      SystemAPI.getRoomList(this.search).then(resp => {
+        if (resp.status === 200) {
+          this.tableData = resp.data.locations
           this.total = resp.total
         }
         this.tableLoading = false

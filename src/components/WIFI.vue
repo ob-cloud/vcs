@@ -22,11 +22,16 @@
 </template>
 
 <script>
-import DeviceAPI from '@/api/device'
+// import DeviceAPI from '@/api/device'
+import SystemAPI from '@/api/system'
 export default {
   name: 'wifi',
   props: {
     height: {
+      type: Number,
+      default: 0
+    },
+    id: {
       type: Number,
       default: 0
     }
@@ -40,14 +45,14 @@ export default {
   },
   created () {
     this.getWIFIListByUser()
-    // this.getWiFiListByRoom()
+    this.getWiFiListByRoom()
   },
   methods: {
     getWIFIListByUser () {
       this.tableLoading = true
-      DeviceAPI.getWifiDeviceList(this.search).then(resp => {
+      SystemAPI.getWifiByUser().then(resp => {
         if (resp.status === 200) {
-          this.tableData = resp.data.configs
+          this.tableData = resp.data.wifi
         } else {
           this.$message({
             message: resp.message || '设备获取失败'
@@ -64,9 +69,9 @@ export default {
       })
     },
     getWiFiListByRoom () {
-      DeviceAPI.getWifiDeviceList(this.search).then(res => {
+      SystemAPI.getWifiByRoom(this.id).then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.configs.filters(item => item.deviceId)
+          this.transferValue = res.data.wifi.filter(item => item.deviceId)
         }
       })
     },

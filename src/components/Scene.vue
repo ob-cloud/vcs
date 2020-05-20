@@ -31,10 +31,15 @@
 </template>
 
 <script>
-import SceneAPI from '@/api/scene'
+// import SceneAPI from '@/api/scene'
+import SystemAPI from '@/api/system'
 export default {
   props: {
     height: {
+      type: Number,
+      default: 0
+    },
+    id: {
       type: Number,
       default: 0
     }
@@ -58,7 +63,7 @@ export default {
   methods: {
     getSceneListByUser () {
       this.tableLoading = true
-      SceneAPI.getSceneList(this.search).then(resp => {
+      SystemAPI.getSceneByUser().then(resp => {
         if (resp.status === 200) {
           this.tableData = resp.data.scenes
         } else {
@@ -77,9 +82,9 @@ export default {
       })
     },
     getSceneListByRoom () {
-      SceneAPI.getSceneList(this.search).then(res => {
+      SystemAPI.getSceneByRoom().then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.scenes.filters(item => item.scene_number)
+          this.transferValue = res.data.scenes.filter(item => item.scene_number)
         }
       })
     },

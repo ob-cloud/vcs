@@ -4,10 +4,10 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>开关序列号</span>
-          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新"></el-button>
+          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSerialIds()"></el-button>
         </div>
-        <div class="list" :style="{height: height + 'px'}">
-          <div class="item" v-for="(item, key) in switchSerials" :key="key" >
+        <div class="list" :style="{height: height + 'px'}" v-loading="loading">
+          <div class="item" :class="{active: item.id === clickedSerial}" v-for="(item, key) in switchSerials" :key="key" @click="handleSerial(item.id)">
             <i class="icon obicon obicon-switch-btn"></i>{{ item.id }}
           </div>
         </div>
@@ -17,10 +17,13 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>灯开关子健</span>
-          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新"></el-button>
+          <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
         </div>
-        <div class="list" :style="{height: height + 'px'}">
-
+        <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
+          <div class="sub item">
+            <p><i class="obicon obicon-switch-btn"></i></p>
+            <span>name</span>
+          </div>
         </div>
       </el-card>
     </el-col>
@@ -32,24 +35,56 @@ import Helper from '@/common/helper'
 export default {
   data () {
     return {
+      loading: false,
+      subloading: false,
       height: 400,
-      switchSerials: [{
-        id: '3k134ad1vs311'
-      }, {
-        id: 'a3k34ad1vs311'
-      }, {
-        id: 'b5as14ad1vs311'
-      }, {
-        id: 'b5as14ad1vs311'
-      }]
+      switchSerials: [],
+      subSwitchList: [],
+      clickedSerial: '',
+      active: 'active'
     }
   },
   mounted () {
+    this.getSerialIds()
     Helper.windowOnResize(this, () => {
       const winH = document.body.clientHeight
       const navH = 50
       this.height = winH - navH - (20 * 2) - 58 - 5
     })
+  },
+  methods: {
+    getSerialIds () {
+      this.loading = true
+      setTimeout(() => {
+        this.switchSerials = [{
+          id: '3k134ad1vs311'
+        }, {
+          id: 'a3k34ad1vs311'
+        }, {
+          id: 'b5as14ad1vs311'
+        }, {
+          id: 'b5as14ad1vs301'
+        }]
+        this.loading = false
+      }, 1500)
+    },
+    refreshSerialIds () {
+      this.getSerialIds()
+    },
+    getSubSwitchsBySerialId (serialId) {
+      this.subloading = true
+      setTimeout(() => {
+        this.subSwitchList = []
+        this.subloading = false
+      }, 1500)
+    },
+    refreshSubSwitchList () {
+      this.clickedSerial && this.getSubSwitchsBySerialId(this.clickedSerial)
+    },
+    handleSerial (serialId) {
+      this.clickedSerial = serialId
+      this.getSubSwitchsBySerialId(serialId)
+    }
   },
 }
 </script>
@@ -75,6 +110,16 @@ export default {
     margin: 5px 0;
     transition: all .2s;
     cursor: pointer;
+  }
+  .list .sub.item{
+    width: 110px;
+    border: 1px solid #000;
+    text-align: center;
+    cursor: default;
+
+    i{
+      font-size: 60px;
+    }
   }
 }
 </style>

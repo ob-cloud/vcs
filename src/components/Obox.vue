@@ -12,8 +12,8 @@
         hasChecked: '${checked}/${total}'
       }"
       :props="{
-        key: 'obox_serial_id',
-        label: 'obox_name'
+        key: 'oboxSerialId',
+        label: 'oboxName'
       }"
       @change="handleChange"
       :data="tableData">
@@ -22,10 +22,15 @@
 </template>
 
 <script>
-import OboxAPI from '@/api/obox'
+// import OboxAPI from '@/api/obox'
+import SystemAPI from '@/api/system'
 export default {
   props: {
     height: {
+      type: Number,
+      default: 0
+    },
+    id: {
       type: Number,
       default: 0
     }
@@ -41,14 +46,14 @@ export default {
   },
   created () {
     this.getAllOboxListByUser()
-    // this.getAllOboxListByRoom()
+    this.getAllOboxListByRoom()
   },
   methods: {
     getAllOboxListByUser () {
       this.tableLoading = true
-      OboxAPI.getOboxList(this.search).then(resp => {
+      SystemAPI.getOboxByUser().then(resp => {
         if (resp.status === 200) {
-          this.tableData = resp.data.oboxs
+          this.tableData = resp.data.oboxes
         } else {
           this.$message({
             message: resp.message || 'obox获取失败'
@@ -65,9 +70,9 @@ export default {
       })
     },
     getAllOboxListByRoom () {
-      OboxAPI.getOboxList().then(res => {
+      SystemAPI.getOboxByRoom(this.id).then(res => {
         if (res.status === 200) {
-          this.transferValue = res.data.oboxs.filters(item => item.obox_serial_id)
+          this.transferValue = res.data.oboxes.filter(item => item.obox_serial_id)
         }
       })
     },
