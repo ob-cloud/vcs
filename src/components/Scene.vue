@@ -1,12 +1,18 @@
 <template>
   <div class="device smart ui-container">
     <div class="search-bar">
-      <el-form class="ob-form" ref="search" autoComplete="on" :rules="searchRules" :model="search">
-        <el-form-item prop="scene_name">
-          <el-input v-model="search.scene_name" class="inblock" clearable placeholder="输入场景命名规则"></el-input>
-        </el-form-item>
-      </el-form>
-      <el-button class="inblock" type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
+      <el-row :gutter="10">
+        <el-col :xs="20" :sm="24" :md="20" :lg="20" :xl="12">
+            <el-form class="ob-form" ref="search" autoComplete="on" :rules="searchRules" :model="search">
+              <el-form-item prop="scene_name">
+                <el-input v-model="search.scene_name" class="inblock" clearable placeholder="输入场景命名规则"></el-input>
+              </el-form-item>
+            </el-form>
+            <el-button class="inblock" type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
+        </el-col>
+        <el-col :xs="1" :sm="1" :md="4" :lg="4" :xl="12">
+        </el-col>
+      </el-row>
     </div>
 
     <el-transfer
@@ -118,7 +124,7 @@ export default {
 }
 .search-bar{
   text-align: left;
-  margin-left: 6%;
+  margin-left: 20px;
 
   .ob-form{
     display: inline-block;
