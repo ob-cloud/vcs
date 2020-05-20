@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 18:37:25
  * @Last Modified by: eamiear
- * @Last Modified time: 2019-12-09 15:53:18
+ * @Last Modified time: 2020-05-20 11:18:08
  */
 
 import {
@@ -22,11 +22,11 @@ const user = {
   state: {
     user: '',
     token: Storage.getToken(),
-    name: cacher.setStrategy('localStorage').get('vms.name'),
+    name: cacher.setStrategy('localStorage').get('vcs.name'),
     avatar: '',
     introduction: '',
     userInfo: null,
-    pwd: cacher.setStrategy('localStorage').get('vms.pk')
+    pwd: cacher.setStrategy('localStorage').get('vcs.pk')
   },
   mutations: {
     [SET_TOKEN] (state, token) {
@@ -59,8 +59,8 @@ const user = {
           if (data) {
             const token = data.access_token
             Storage.setToken(token)
-            cacher.setStrategy('localStorage').set('vms.pk', password)
-            cacher.setStrategy('localStorage').set('vms.name', userInfo.account.trim())
+            cacher.setStrategy('localStorage').set('vcs.pk', password)
+            cacher.setStrategy('localStorage').set('vcs.name', userInfo.account.trim())
             commit('SET_TOKEN', token)
             commit('SET_NAME', userInfo.account.trim())
             commit('SET_USER_INFO', data)
@@ -82,8 +82,23 @@ const user = {
             commit('SET_NAME', '')
             commit('SET_PWD', '')
             Storage.removeToken()
-            cacher.setStrategy('localStorage').remove('vms.pk')
-            cacher.setStrategy('localStorage').remove('vms.name')
+            cacher.setStrategy('localStorage').remove('vcs.pk')
+            cacher.setStrategy('localStorage').remove('vcs.name')
+            resolve()
+          } else {
+            reject(res.message)
+          }
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    rename ({ commit, state }) {
+      return new Promise((resolve, reject) => {
+        SystemAPI.rename(state.token).then(res => {
+          if (res.message.includes('success')) {
+            commit('SET_NAME', state.name)
+            cacher.setStrategy('localStorage').set('vcs.name', state.name)
             resolve()
           } else {
             reject(res.message)
