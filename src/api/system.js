@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 16:24:48
+ * @Last Modified time: 2020-05-20 17:59:44
  */
 
 import {request} from '@/common/request'
@@ -76,10 +76,9 @@ const SystemAPI = {
       serialId
     })
   },
-  getSceneByRoom () {
+  getSceneByRoom (location) {
     return request.get('/consumer/PmsForDur/location/getScene', {
-      pageNo: 1,
-      pageSize: 10000
+      location
     })
   },
   getSceneByUser (word) {
