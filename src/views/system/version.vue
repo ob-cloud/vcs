@@ -288,10 +288,10 @@ export default {
             message: '绑定成功'
           })
           this.xiaoduVisible = false
-        }else {
+        } else {
           this.$message({
             type: 'error',
-            message: '绑定失败'
+            message: res.message || '绑定失败'
           })
         }
       }).catch(() => {
@@ -309,10 +309,10 @@ export default {
             message: '解绑成功'
           })
           this.xiaoduVisible = false
-        }else {
+        } else {
           this.$message({
             type: 'error',
-            message: '解绑失败'
+            message: res.message || '解绑失败'
           })
         }
       }).catch(() => {

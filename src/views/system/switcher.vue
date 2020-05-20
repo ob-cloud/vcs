@@ -17,7 +17,7 @@
       <el-col :xs="10" :sm="14" :md="19" :lg="19" :xl="19">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>灯开关子健</span>
+            <span>开关子健</span>
             <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
           </div>
           <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
