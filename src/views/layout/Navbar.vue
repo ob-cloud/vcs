@@ -13,12 +13,26 @@
             </div>
           </el-button>
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="rename">重命名</el-dropdown-item>
             <el-dropdown-item command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
 
       <ura-nav-menu class="navbar-menu-nav"></ura-nav-menu>
+
+      <el-dialog title="修改名称" width="600px" :visible.sync="dialogVisible" :close-on-click-modal="false">
+        <el-form autoComplete="on" :rules="modelRules" :model="model"  ref="rename" label-position="right" label-width="18%">
+          <el-form-item label="名称:" prop="name">
+            <el-input class="filter-item" placeholder="输入名称" v-model="model.name">
+            </el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer text-center" >
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" :loading="loading" @click="rename()">确 认</el-button>
+        </div>
+      </el-dialog>
     </nav>
   </section>
 </template>
@@ -30,8 +44,18 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      loading: false
+      loading: false,
+      dialogVisible: false,
+      model: {
+        name: ''
+      },
+      modelRules: {
+        name: [{ required: true, trigger: 'blur', message: '名称不能为空' }]
+      }
     }
+  },
+  mounted () {
+    this.model.name = this.name
   },
   components: { UraBrand, UraNavMenu },
   computed: {
@@ -40,10 +64,15 @@ export default {
     ])
   },
   watch: {
+    dialogVisible (visbile) {
+      if (visbile === false) {
+        this.$refs.rename.resetFields()
+      }
+    }
   },
   methods: {
     handleCommand (command) {
-      command === 'logout' && this.logout()
+      command === 'logout' ? this.logout() : (this.dialogVisible = true)
     },
     switchSidebarCollapse () {
       this.$store.dispatch('switchSidebarCollapse', !this.sidebarCollapse)
@@ -52,6 +81,9 @@ export default {
       this.$store.dispatch('logOut').then(() => {
         location.reload()
       })
+    },
+    rename () {
+
     }
   }
 }
