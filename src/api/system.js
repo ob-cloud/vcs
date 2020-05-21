@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-21 15:05:30
+ * @Last Modified time: 2020-05-21 15:11:34
  */
 
 import {request} from '@/common/request'
@@ -19,8 +19,10 @@ const SystemAPI = {
   logout (accessToken) {
     return request.delete('/oauth/token/' + accessToken)
   },
-  getHotelName () {
-    return request.get('/consumer/PmsForDur/getHotelName')
+  getHotelName (accessToken) {
+    return request.get('/consumer/PmsForDur/getHotelName', {
+      'access_token': accessToken
+    })
   },
   editHotelName (hotelName) {
     return request.put('/consumer/PmsForDur/editHotelName', {

@@ -84,6 +84,10 @@ export default {
     },
     rename () {
       this.$refs.rename.validate(valid => {
+        this.$store.dispatch('renameHotel', this.model.name).then(() => {
+          this.$message({type: 'success', message: '重命名成功'})
+          this.dialogVisible = false
+        })
       })
     }
   }

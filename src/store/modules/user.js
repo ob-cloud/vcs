@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 18:37:25
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 11:18:08
+ * @Last Modified time: 2020-05-21 15:24:56
  */
 
 import {
@@ -55,14 +55,19 @@ const user = {
     loginByAccount ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         const password = md5(btoa(userInfo.password) + userInfo.password)
-        SystemAPI.login(userInfo.account.trim(), password).then(data => {
+        SystemAPI.login(userInfo.account.trim(), password).then(async data => {
           if (data) {
             const token = data.access_token
+            const hotelRes = await SystemAPI.getHotelName(token)
+            let hotelName = ''
+            if (hotelRes.status === 200) {
+              hotelName = hotelRes.data.hotelName
+            }
             Storage.setToken(token)
             cacher.setStrategy('localStorage').set('vcs.pk', password)
-            cacher.setStrategy('localStorage').set('vcs.name', userInfo.account.trim())
+            cacher.setStrategy('localStorage').set('vcs.name', hotelName || userInfo.account.trim())
             commit('SET_TOKEN', token)
-            commit('SET_NAME', userInfo.account.trim())
+            commit('SET_NAME', hotelName || userInfo.account.trim())
             commit('SET_USER_INFO', data)
             commit('SET_PWD', password)
           }
@@ -93,15 +98,15 @@ const user = {
         })
       })
     },
-    rename ({ commit, state }) {
+    renameHotel ({ commit }, hotelName) {
       return new Promise((resolve, reject) => {
-        SystemAPI.rename(state.token).then(res => {
-          if (res.message.includes('success')) {
-            commit('SET_NAME', state.name)
-            cacher.setStrategy('localStorage').set('vcs.name', state.name)
-            resolve()
+        SystemAPI.editHotelName(hotelName).then(res => {
+          if (res.status === 200) {
+            commit('SET_NAME', hotelName)
+            cacher.setStrategy('localStorage').set('vcs.name', hotelName)
+            resolve(true)
           } else {
-            reject(res.message)
+            reject(false)
           }
         }).catch(error => {
           reject(error)
