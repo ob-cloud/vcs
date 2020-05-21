@@ -48,6 +48,7 @@
 <script>
 import SystemAPI from '@/api/system'
 import Helper from '@/common/helper'
+import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 export default {
   data () {
     return {
@@ -66,7 +67,11 @@ export default {
       },
       editRules: {
         name: [{ required: true, trigger: 'blur', message: '名称不能为空' }]
-      }
+      },
+      pageNo: PAGINATION_PAGENO,
+      pageSize: PAGINATION_PAGESIZE,
+      total: 0,
+      totalPage: 0
     }
   },
   mounted () {
@@ -78,16 +83,25 @@ export default {
     })
   },
   methods: {
+    loadSerial () {
+      if (this.pageNo + 1 > this.totalPage) return
+      this.pageNo = this.pageNo + 1
+      this.getSwitchSerials()
+    },
     getSerialIds () {
       this.loading = true
-      SystemAPI.getSwitchSerials().then(res => {
+      SystemAPI.getSwitchSerials(this.pageNo, this.pageSize).then(res => {
         this.loading = false
         if (res.status === 200) {
           this.switchSerials = res.data.devices
+          // this.switchSerials.concat(res.data.devices)
+          // this.total = res.total
+          // this.totalPage = Math.ceil(this.total / this.pageSize)
         }
       })
     },
     refreshSerialIds () {
+      this.pageNo = 1
       this.getSerialIds()
     },
     getSubSwitchsBySerialId (serialId) {

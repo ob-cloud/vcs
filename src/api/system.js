@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-21 15:11:34
+ * @Last Modified time: 2020-05-21 15:36:16
  */
 
 import {request} from '@/common/request'
@@ -120,10 +120,10 @@ const SystemAPI = {
       serialId
     })
   },
-  getSwitchSerials () {
+  getSwitchSerials (pageNo = 1, pageSize = 10) {
     return request.get('/consumer/PmsForDur/getSocketDevice', {
-      pageNo: 1,
-      pageSize: 10000
+      pageNo,
+      pageSize
     })
   },
   getSubSwitch (serialId) {
