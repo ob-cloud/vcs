@@ -68,6 +68,8 @@ export default {
     drawerVisible () {
       if (this.drawerVisible) {
         this.getSceneListByRoom()
+      } else {
+        this.$refs.search.resetFields()
       }
     }
   },
