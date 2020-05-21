@@ -115,7 +115,6 @@ export default {
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindWifi(currentVal) : this.unbindWifi(currentVal)
-      console.log(currentVal, direction)
     }
   }
 }

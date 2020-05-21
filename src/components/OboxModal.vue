@@ -85,7 +85,6 @@ export default {
         this.bindingLoading = false
         if (res.status === 200) {
           this.transferValue = res.data.oboxes.map(item => item.oboxSerialId)
-          console.log(this.transferValue)
         }
       }).catch(() => {
         this.bindingLoading = false
@@ -121,7 +120,6 @@ export default {
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindObox(currentVal) : this.unbindObox(currentVal)
-      console.log(currentVal)
     }
   }
 }

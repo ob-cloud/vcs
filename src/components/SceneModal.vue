@@ -141,7 +141,6 @@ export default {
     },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindScene(currentVal) : this.unbindScene(currentVal)
-      console.log(currentVal, direction)
     }
   }
 }
