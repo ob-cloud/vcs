@@ -39,6 +39,9 @@ body.dark{
   @include linearGradientBackground()
 }
 .dark{
+  .obicon{
+    font-size: 14px;
+  }
   // HEADER NAVIBAR
   .app-header{
     // background-image: $blue-gradient;
