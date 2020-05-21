@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-20 17:59:44
+ * @Last Modified time: 2020-05-21 14:47:50
  */
 
 import {request} from '@/common/request'
@@ -18,6 +18,14 @@ const SystemAPI = {
   },
   logout (accessToken) {
     return request.delete('/oauth/token/' + accessToken)
+  },
+  getHotelName () {
+    return request.get('/consumer/PmsForDur/getHotelName')
+  },
+  editHotelName (hotelName) {
+    return request.put('/consumer/PmsForDur/editHotelName', {
+      hotelName
+    })
   },
   addRoom (roomList) {
     return request.post('/consumer/PmsForDur/addLocation', {
@@ -88,10 +96,10 @@ const SystemAPI = {
       pageSize: 10000
     })
   },
-  bindScene (location, serialIds) {
+  bindScene (location, sceneNumbers) {
     return request.post('/consumer/PmsForDur/bindScene', {
       location,
-      serialIds
+      sceneNumbers
     })
   },
   unbindScene (sceneNumber) {
@@ -108,6 +116,24 @@ const SystemAPI = {
   unbindXiaodu (serialId) {
     return request.delete('/consumer/PmsForDur/unLinkDure', {
       serialId
+    })
+  },
+  getSwitchSerials () {
+    return request.get('/consumer/PmsForDur/getSocketDevice', {
+      pageNo: 1,
+      pageSize: 10000
+    })
+  },
+  getSubSwitch (serialId) {
+    return request.get('/consumer/PmsForDur/getSocket', {
+      serialId
+    })
+  },
+  editSubSwitch (id, serialId, name) {
+    return request.put('/consumer/PmsForDur/editSocket', {
+      id,
+      serialId,
+      name
     })
   },
   getVersionList (firmware = {}) {
