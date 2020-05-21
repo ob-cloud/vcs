@@ -61,6 +61,7 @@
           :before-upload="onBeforeUpload"
           :on-success="onUploadSuccess"
           :on-error="onUploadFail"
+          :multiple="false"
           action="/consumer/PmsForDur/upLoadExcel">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -68,52 +69,21 @@
         </el-upload>
     </el-dialog>
 
-    <el-drawer
-      ref="drawer"
-      :title="drawerTitle"
-      :visible.sync="drawerVisible"
-      direction="rtl"
-      size="60%"
-      @closed="selection = []">
-        <iobox :height="300" v-if="drawerType == 1" :id="drawerId" @on-selection-change="onSelectionChange"/>
-        <iwifi :height="300" v-else-if="drawerType == 2" :id="drawerId" @on-selection-change="onSelectionChange"/>
-        <iscene :height="300" v-else-if="drawerType == 3" :id="drawerId" @on-selection-change="onSelectionChange"/>
-    </el-drawer>
     <OboxModal ref="oboxModal"></OboxModal>
     <WifiModal ref="wifiModal"></WifiModal>
     <SceneModal ref="sceneModal"></SceneModal>
-
-    <!-- view  -->
-    <el-drawer
-      ref="drawer"
-      title="房间设备详情"
-      :visible.sync="drawerViewVisible"
-      direction="btt"
-      size="60%">
-        <ideviceinfo></ideviceinfo>
-        <!-- <div class="drawer-footer">
-          <el-button @click="drawerVisible = false; selection = []">取 消</el-button>
-          <el-button type="primary" @click="onDrawerSubmit">确 定</el-button>
-        </div> -->
-    </el-drawer>
   </div>
 </template>
 
 <script>
 import BaseTable from '@/assets/package/table-base'
-import iobox from '../../components/Obox'
 import OboxModal from '../../components/OboxModal'
 import WifiModal from '../../components/WifiModal'
 import SceneModal from '../../components/SceneModal'
-import iwifi from '../../components/WIFI'
-import iscene from '../../components/Scene'
-import ideviceinfo from '../../components/DeviceInfo'
 import SystemAPI from '@/api/system'
 import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
 import Helper from '@/common/helper'
-import {
-  mapGetters
-} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -158,17 +128,10 @@ export default {
       uploadVisible: false,
       uploadData: {
         access_token: ''
-      },
-      // 操作
-      drawerVisible: false,
-      drawerTitle: '',
-      drawerId: '',
-      drawerType: '',
-      selection: [],
-      drawerViewVisible: false
+      }
     }
   },
-  components: { BaseTable, iobox, iwifi, iscene, ideviceinfo, OboxModal, WifiModal, SceneModal },
+  components: { BaseTable, OboxModal, WifiModal, SceneModal },
   created () {
     this.columns = this.getColumns()
     this.getVersionList()
@@ -214,18 +177,7 @@ export default {
         label: '房间号',
         prop: 'room',
         align: 'center'
-      },
-      // {
-      //   label: '楼栋',
-      //   prop: 'building',
-      //   align: 'center'
-      // },
-      // {
-      //   label: '层',
-      //   prop: 'layer',
-      //   align: 'center'
-      // },
-      {
+      }, {
         label: '更新时间',
         prop: 'lastOpTime',
         align: 'center',
@@ -241,7 +193,7 @@ export default {
     },
     getToolboxRender (h, row) {
       const toolbox = []
-      // const view = <el-button class="colors" size="tiny" icon="obicon obicon-eye" title='查看' onClick={() => { this.drawerViewVisible = true }}></el-button>
+      // const view = <el-button class="colors" size="tiny" icon="obicon obicon-eye" title='查看' onClick={() => {  }}></el-button>
       const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.$refs.oboxModal.show(row.location) }}></el-button>
       const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.$refs.wifiModal.show(row.location) }}></el-button>
       const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.$refs.sceneModal.show(row.location) }}></el-button>
@@ -280,11 +232,15 @@ export default {
       this.search.pageSize = pageSize
       this.getVersionList()
     },
-    onSelectionChange (row) {
-      this.selection = row || []
-    },
     onBeforeUpload (file) {
-
+      const suffix = file.name && file.name.slice(file.name.lastIndexOf('.') + 1)
+      if (!['xlsx', 'xls'].includes(suffix)) {
+        this.$message({
+          type: 'error',
+          message: '只能上传Excel文件'
+        })
+        return false
+      }
     },
     onUploadSuccess (response, file, fileList) {
       if (response.status === 200) {
@@ -431,21 +387,6 @@ export default {
           message: '服务异常'
         })
       })
-    },
-    onDrawerSubmit () {
-      if (!this.selection.length) {
-        this.$message({
-          type: 'warning',
-          message: '未选择设备'
-        })
-        return
-      }
-      // TODO http to submit binding task then close the drawer and reload the list
-      // by the this.drawerType
-      console.log('--- submit ', this.selection)
-      this.drawerVisible = false
-      // this.$refs.drawer.closeDrawer()
-      // this.getVersionList()
     }
   }
 }
