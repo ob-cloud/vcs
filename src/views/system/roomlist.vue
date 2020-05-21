@@ -182,8 +182,10 @@ export default {
         label: '小度状态',
         prop: 'serialId',
         align: 'center',
-        formatter (val) {
-          return val ? '已绑定' : '未绑定'
+        renderBody (h, row) {
+          const bind = <div><svg t="1590052256481" class="icon" style="vertical-align: sub;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1816" width="16" height="16"><path d="M512 298.666667c117.333333 0 213.333333 96 213.333333 213.333333s-96 213.333333-213.333333 213.333333-213.333333-96-213.333333-213.333333S394.666667 298.666667 512 298.666667z" p-id="1817" fill="#0FC6FE"></path></svg><span>已绑定</span></div>
+          const unbind = <div><svg t="1590052256481" class="icon" style="vertical-align: sub;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1816" width="16" height="16"><path d="M512 298.666667c117.333333 0 213.333333 96 213.333333 213.333333s-96 213.333333-213.333333 213.333333-213.333333-96-213.333333-213.333333S394.666667 298.666667 512 298.666667z" p-id="1817" fill="#d4237a"></path></svg><span>未绑定</span></div>
+          return row.serialId ? [bind] : [unbind]
         }
       }, {
         label: '更新时间',
