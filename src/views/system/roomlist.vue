@@ -14,7 +14,7 @@
 
       <slot>
         <template slot="caption">
-          <el-input clearable @keyup.enter.native="handleSearch" class="caption-item" placeholder="输入房间号" v-model="search.room"></el-input>
+          <el-input clearable @keyup.enter.native="handleSearch" class="caption-item" placeholder="输入房间号" v-model="search.word"></el-input>
           <el-button type="primary" icon="el-icon-search" @click="handleSearch">查询</el-button>
         </template>
         <template slot="actionBar">
@@ -41,8 +41,8 @@
         <el-form-item label="房间号" prop="roomNo">
           <el-input v-model="xiaoduModel.roomNo" readonly></el-input>
         </el-form-item>
-        <el-form-item label="序列号" prop="serialNo">
-          <el-input v-model="xiaoduModel.serialNo" placeholder="输入序列号"></el-input>
+        <el-form-item label="序列号" prop="serialId">
+          <el-input v-model="xiaoduModel.serialId" placeholder="输入序列号"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -101,7 +101,7 @@ export default {
       tableHeight: 0,
       total: 0,
       search: {
-        room: '',
+        word: '',
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
@@ -120,10 +120,10 @@ export default {
       xiaoduVisible: false,
       xiaoduModel: {
         roomNo: '',
-        serialNo: ''
+        serialId: ''
       },
       xiaoduRules: {
-        serialNo: [{ required: true, message: '序列号不能为空', trigger: 'blur' }]
+        serialId: [{ required: true, message: '序列号不能为空', trigger: 'blur' }]
       },
       uploadVisible: false,
       uploadData: {
@@ -179,14 +179,14 @@ export default {
         align: 'center'
       }, {
         label: '小度状态',
-        prop: 'serial',
+        prop: 'serialId',
         align: 'center',
         formatter (val) {
           return val ? '已绑定' : '未绑定'
         }
       }, {
         label: '更新时间',
-        prop: 'lastOpTime',
+        prop: 'time',
         align: 'center',
         formatter (val) {
           return val && Helper.parseTime(val)
@@ -201,10 +201,10 @@ export default {
     getToolboxRender (h, row) {
       const toolbox = []
       // const view = <el-button class="colors" size="tiny" icon="obicon obicon-eye" title='查看' onClick={() => {  }}></el-button>
-      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.$refs.oboxModal.show(row.location) }}></el-button>
-      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.$refs.wifiModal.show(row.location) }}></el-button>
-      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.$refs.sceneModal.show(row.location) }}></el-button>
-      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room }}></el-button>
+      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.$refs.oboxModal.show(row.id) }}></el-button>
+      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.$refs.wifiModal.show(row.id) }}></el-button>
+      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.$refs.sceneModal.show(row.id) }}></el-button>
+      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room; this.xiaoduModel.serialId = row.serialId }}></el-button>
       const remove = <el-button class="colors" size="tiny" icon="obicon obicon-trash" title='删除房间' onClick={() => this.handleRemove(row)}></el-button>
       // toolbox.push(view)
       toolbox.push(obox)
@@ -265,7 +265,7 @@ export default {
       }
     },
     onUploadFail (response, file, fileList) {
-      console.log('error ', response)
+      this.$message({type: 'error', message: '上传失败'})
     },
     handleSearch () {
       this.search.pageNo = PAGINATION_PAGENO
@@ -296,12 +296,11 @@ export default {
               })
             }
           })
-          console.log('add room', roomList)
         }
       })
     },
     bindXiaodu () {
-      SystemAPI.bindXiaodu(this.xiaoduModel.roomNo, this.xiaoduModel.serialNo).then(res => {
+      SystemAPI.bindXiaodu(this.xiaoduModel.roomNo, this.xiaoduModel.serialId).then(res => {
         if (res.status === 200) {
           this.$message({
             type: 'success',
@@ -322,7 +321,7 @@ export default {
       })
     },
     unbindXiaodu () {
-      SystemAPI.unbindXiaodu(this.xiaoduModel.serialNo).then(res => {
+      SystemAPI.unbindXiaodu(this.xiaoduModel.serialId).then(res => {
         if (res.status === 200) {
           this.$message({
             type: 'success',
@@ -357,7 +356,6 @@ export default {
     handleXiaoduSubmit () {
       this.$refs.xiaodu.validate(valid => {
         if (valid) {
-          console.log('add xiaodu')
           this.bindXiaodu()
         }
       })
@@ -369,13 +367,13 @@ export default {
         type: 'warning',
         closeOnClickModal: false
       }).then(() => {
-        this.delRoom(row.location)
+        this.delRoom(row.id)
       }).catch(() => {
         console.log('cancel')
       })
     },
-    delRoom (location) {
-      SystemAPI.delRoom(location).then(resp => {
+    delRoom (id) {
+      SystemAPI.delRoom(id).then(resp => {
         if (resp.status === 200) {
           this.$message({
             type: 'success',
