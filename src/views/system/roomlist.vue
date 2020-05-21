@@ -101,7 +101,7 @@ export default {
       tableHeight: 0,
       total: 0,
       search: {
-        // room: '',
+        room: '',
         pageNo: PAGINATION_PAGENO,
         pageSize: PAGINATION_PAGESIZE
       },
@@ -134,7 +134,7 @@ export default {
   components: { BaseTable, OboxModal, WifiModal, SceneModal },
   created () {
     this.columns = this.getColumns()
-    this.getVersionList()
+    this.getHotelRoomList()
   },
   computed: {
     layoutHeight () {
@@ -207,7 +207,7 @@ export default {
       toolbox.push(remove)
       return toolbox
     },
-    getVersionList () {
+    getHotelRoomList () {
       this.tableLoading = true
       SystemAPI.getRoomList(this.search).then(resp => {
         if (resp.status === 200) {
@@ -226,11 +226,11 @@ export default {
     },
     onCurrentChange (pageNo) {
       this.search.pageNo = pageNo
-      this.getVersionList()
+      this.getHotelRoomList()
     },
     onSizeChange (pageSize) {
       this.search.pageSize = pageSize
-      this.getVersionList()
+      this.getHotelRoomList()
     },
     onBeforeUpload (file) {
       const suffix = file.name && file.name.slice(file.name.lastIndexOf('.') + 1)
@@ -249,7 +249,7 @@ export default {
           message: '解析成功'
         })
         this.uploadVisible = false
-        this.getVersionList()
+        this.getHotelRoomList()
       } else {
         this.$message({
           type: 'error',
@@ -262,7 +262,7 @@ export default {
     },
     handleSearch () {
       this.search.pageNo = PAGINATION_PAGENO
-      this.getVersionList()
+      this.getHotelRoomList()
     },
     handlePlusRoom () {
       this.model.rooms.push({
@@ -280,7 +280,7 @@ export default {
                 type: 'success',
                 message: '添加成功'
               })
-              this.getVersionList()
+              this.getHotelRoomList()
               this.dialogVisible = false
             } else {
               this.$message({
@@ -374,7 +374,7 @@ export default {
             type: 'success',
             message: '删除成功'
           })
-          this.getVersionList()
+          this.getHotelRoomList()
         } else {
           this.$message({
             type: 'error',
