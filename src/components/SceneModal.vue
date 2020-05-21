@@ -3,7 +3,7 @@
     title="绑定云端场景"
     :visible.sync="drawerVisible"
     direction="rtl"
-    size="60%">
+    size="800px">
       <div class="device smart ui-container">
         <div class="search-bar">
           <el-row :gutter="10">

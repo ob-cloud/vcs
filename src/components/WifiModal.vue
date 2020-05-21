@@ -3,7 +3,7 @@
     title="绑定红外"
     :visible.sync="drawerVisible"
     direction="rtl"
-    size="60%">
+    size="800px">
       <div class="ui-container">
         <el-transfer
           v-loading="tableLoading || bindingLoading"
