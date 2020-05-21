@@ -8,8 +8,8 @@
             <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSerialIds()"></el-button>
           </div>
           <div class="list" :style="{height: height + 'px'}" v-loading="loading">
-            <div class="item" :class="{active: item.id === clickedSerial}" v-for="(item, key) in switchSerials" :key="key" @click="handleSerial(item.id)">
-              <i class="icon obicon obicon-switch-btn"></i>{{ item.id }}
+            <div class="item" :class="{active: item.serialId === clickedSerial}" :title="`${item.deviceName}_${item.serialId}`" v-for="(item, key) in switchSerials" :key="key" @click="handleSerial(item.serialId)">
+              <i class="icon obicon obicon-switch-btn"></i>{{ `${item.deviceName}_${item.serialId}` }}
             </div>
           </div>
         </el-card>
@@ -21,7 +21,7 @@
             <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
           </div>
           <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
-            <div class="sub item" v-for="(item, key) in subSwitchList" :key="key" @click="handleEdit(item)">
+            <div class="sub item" v-for="(item, key) in subSwitchList" :key="key" @click="handleEdit(item)" :title="item.name">
               <i class="obicon obicon-edit-o edit" title="编辑" @click.prevent="handleEdit(item)"></i>
               <p><i class="obicon obicon-switch-btn"></i></p>
               <span>{{item.name}}</span>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import SystemAPI from '@/api/system'
 import Helper from '@/common/helper'
 export default {
   data () {
@@ -59,7 +60,9 @@ export default {
       active: 'active',
       dialogVisible: false,
       model: {
-        name: ''
+        id: '',
+        name: '',
+        serialId: ''
       },
       editRules: {
         name: [{ required: true, trigger: 'blur', message: '名称不能为空' }]
@@ -77,43 +80,24 @@ export default {
   methods: {
     getSerialIds () {
       this.loading = true
-      setTimeout(() => {
-        this.switchSerials = [{
-          id: '3k134ad1vs311'
-        }, {
-          id: 'a3k34ad1vs311'
-        }, {
-          id: 'b5as14ad1vs311'
-        }, {
-          id: 'b5as14ad1vs301'
-        }]
+      SystemAPI.getSwitchSerials().then(res => {
         this.loading = false
-      }, 1500)
+        if (res.status === 200) {
+          this.switchSerials = res.data.devices
+        }
+      })
     },
     refreshSerialIds () {
       this.getSerialIds()
     },
     getSubSwitchsBySerialId (serialId) {
       this.subloading = true
-      setTimeout(() => {
-        this.subSwitchList = [{
-          id: 'm123445a',
-          name: '开关1'
-        }, {
-          id: 'm123445b',
-          name: '开关2'
-        }, {
-          id: 'm123445c',
-          name: '开关3'
-        }, {
-          id: 'm123445d',
-          name: '开关4'
-        }, {
-          id: 'm123445e',
-          name: '开关5'
-        }]
+      SystemAPI.getSubSwitch(serialId).then(res => {
         this.subloading = false
-      }, 1500)
+        if (res.status === 200) {
+          this.subSwitchList = res.data.sockets
+        }
+      })
     },
     refreshSubSwitchList () {
       this.clickedSerial && this.getSubSwitchsBySerialId(this.clickedSerial)
@@ -125,9 +109,26 @@ export default {
     handleEdit (item) {
       this.dialogVisible = true
       this.model.name = item.name
+      this.model.id = item.id
+      this.model.serialId = item.serialId
     },
     rename () {
       this.$refs.edit.validate(valid => {
+        SystemAPI.editSubSwitch(this.model.id, this.model.serialId, this.model.name).then(res => {
+          if (res.status === 200) {
+            this.$message({
+              type: 'success',
+              message: '编辑成功'
+            })
+            this.dialogVisible = false
+            this.refreshSubSwitchList()
+          } else {
+            this.$message({
+              type: 'error',
+              message: '编辑失败'
+            })
+          }
+        })
       })
     }
   },
@@ -153,6 +154,8 @@ export default {
     font-size: 14px;
     padding: 10px;
     margin: 5px 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
     transition: all .2s;
     cursor: pointer;
   }
