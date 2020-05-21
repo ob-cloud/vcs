@@ -78,12 +78,10 @@
         <iobox :height="300" v-if="drawerType == 1" :id="drawerId" @on-selection-change="onSelectionChange"/>
         <iwifi :height="300" v-else-if="drawerType == 2" :id="drawerId" @on-selection-change="onSelectionChange"/>
         <iscene :height="300" v-else-if="drawerType == 3" :id="drawerId" @on-selection-change="onSelectionChange"/>
-
-        <!-- <div class="drawer-footer">
-          <el-button @click="drawerVisible = false; selection = []">取 消</el-button>
-          <el-button type="primary" @click="onDrawerSubmit">确 定</el-button>
-        </div> -->
     </el-drawer>
+    <OboxModal ref="oboxModal"></OboxModal>
+    <WifiModal ref="wifiModal"></WifiModal>
+    <SceneModal ref="sceneModal"></SceneModal>
 
     <!-- view  -->
     <el-drawer
@@ -93,6 +91,10 @@
       direction="btt"
       size="60%">
         <ideviceinfo></ideviceinfo>
+        <!-- <div class="drawer-footer">
+          <el-button @click="drawerVisible = false; selection = []">取 消</el-button>
+          <el-button type="primary" @click="onDrawerSubmit">确 定</el-button>
+        </div> -->
     </el-drawer>
   </div>
 </template>
@@ -100,6 +102,9 @@
 <script>
 import BaseTable from '@/assets/package/table-base'
 import iobox from '../../components/Obox'
+import OboxModal from '../../components/OboxModal'
+import WifiModal from '../../components/WifiModal'
+import SceneModal from '../../components/SceneModal'
 import iwifi from '../../components/WIFI'
 import iscene from '../../components/Scene'
 import ideviceinfo from '../../components/DeviceInfo'
@@ -163,7 +168,7 @@ export default {
       drawerViewVisible: false
     }
   },
-  components: { BaseTable, iobox, iwifi, iscene, ideviceinfo },
+  components: { BaseTable, iobox, iwifi, iscene, ideviceinfo, OboxModal, WifiModal, SceneModal },
   created () {
     this.columns = this.getColumns()
     this.getVersionList()
@@ -209,11 +214,12 @@ export default {
         label: '房间号',
         prop: 'room',
         align: 'center'
-      }, {
-        label: '楼栋',
-        prop: 'building',
-        align: 'center'
       },
+      // {
+      //   label: '楼栋',
+      //   prop: 'building',
+      //   align: 'center'
+      // },
       // {
       //   label: '层',
       //   prop: 'layer',
@@ -236,9 +242,9 @@ export default {
     getToolboxRender (h, row) {
       const toolbox = []
       // const view = <el-button class="colors" size="tiny" icon="obicon obicon-eye" title='查看' onClick={() => { this.drawerViewVisible = true }}></el-button>
-      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定OBOX'; this.drawerId = row.location; this.drawerType = 1 }}></el-button>
-      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定红外'; this.drawerId = row.location; this.drawerType = 2 }}></el-button>
-      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.drawerVisible = true; this.drawerTitle = '绑定云端场景'; this.drawerId = row.location; this.drawerType = 3 }}></el-button>
+      const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.$refs.oboxModal.show(row.location) }}></el-button>
+      const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.$refs.wifiModal.show(row.location) }}></el-button>
+      const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.$refs.sceneModal.show(row.location) }}></el-button>
       const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room }}></el-button>
       const remove = <el-button class="colors" size="tiny" icon="obicon obicon-trash" title='删除房间' onClick={() => this.handleRemove(row)}></el-button>
       // toolbox.push(view)
@@ -405,8 +411,8 @@ export default {
         console.log('cancel')
       })
     },
-    delRoom (locatoin) {
-      SystemAPI.delRoom(locatoin).then(resp => {
+    delRoom (location) {
+      SystemAPI.delRoom(location).then(resp => {
         if (resp.status === 200) {
           this.$message({
             type: 'success',
