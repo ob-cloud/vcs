@@ -36,7 +36,7 @@
       </span>
     </el-dialog>
 
-    <el-dialog  v-if="xiaoduVisible" top="10%" width="660px" title="小度操作" :visible.sync="xiaoduVisible" :close-on-click-modal="false">
+    <el-dialog  v-if="xiaoduVisible" top="10%" width="660px" title="编辑小度" :visible.sync="xiaoduVisible" :close-on-click-modal="false">
       <el-form class="ob-form" ref="xiaodu" autoComplete="on" :rules="xiaoduRules" :model="xiaoduModel" label-width="80px" style="width: 90%; margin: 0 auto;">
         <el-form-item label="房间号" prop="roomNo">
           <el-input v-model="xiaoduModel.roomNo" readonly></el-input>
@@ -47,7 +47,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="xiaoduVisible = false">取消</el-button>
-        <el-button @click="handleUnbindXiaodu()">解绑</el-button>
+        <el-button type="primary" @click="handleUnbindXiaodu()">解绑</el-button>
         <el-button type="primary" @click="handleXiaoduSubmit()">绑定</el-button>
       </span>
     </el-dialog>
