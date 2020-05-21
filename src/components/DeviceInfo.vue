@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <el-drawer
+    ref="drawer"
+    title="房间设备详情"
+    :visible.sync="drawerVisible"
+    direction="btt"
+    size="60%">
     <el-row :gutter="10" class="switch">
       <el-col :xs="4" :sm="5" :md="5" :lg="5" :xl="5">
         <el-card class="box-card">
@@ -28,19 +33,14 @@
         </el-card>
       </el-col>
     </el-row>
-  </div>
+  </el-drawer>
 </template>
 
 <script>
 export default {
-  props: {
-    id: {
-      type: Number,
-      default: 0
-    }
-  },
   data () {
     return {
+      drawerVisible: false,
       loading: false,
       subloading: false,
       height: 400,
