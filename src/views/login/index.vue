@@ -127,6 +127,10 @@ export default {
             }
           }).catch(() => {
             this.loading = false
+            this.$message({
+              message: '服务异常',
+              type: 'error'
+            })
           })
         } else {
           return false
