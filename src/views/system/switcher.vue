@@ -69,7 +69,7 @@ export default {
         name: [{ required: true, trigger: 'blur', message: '名称不能为空' }]
       },
       pageNo: PAGINATION_PAGENO,
-      pageSize: PAGINATION_PAGESIZE,
+      pageSize: PAGINATION_PAGESIZE * 1000,
       total: 0,
       totalPage: 0
     }
