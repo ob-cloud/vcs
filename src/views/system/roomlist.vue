@@ -178,6 +178,13 @@ export default {
         prop: 'room',
         align: 'center'
       }, {
+        label: '小度状态',
+        prop: 'serial',
+        align: 'center',
+        formatter (val) {
+          return val ? '已绑定' : '未绑定'
+        }
+      }, {
         label: '更新时间',
         prop: 'lastOpTime',
         align: 'center',
