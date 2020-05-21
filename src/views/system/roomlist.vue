@@ -119,6 +119,7 @@ export default {
       },
       xiaoduVisible: false,
       xiaoduModel: {
+        location: '',
         roomNo: '',
         serialId: ''
       },
@@ -204,7 +205,7 @@ export default {
       const obox = <el-button class="colors" size="tiny" icon="obicon obicon-hardware" title='绑定OBOX' onClick={() => { this.$refs.oboxModal.show(row.id) }}></el-button>
       const wifi = <el-button class="colors" size="tiny" icon="obicon obicon-infrared" title='绑定红外' onClick={() => { this.$refs.wifiModal.show(row.id) }}></el-button>
       const scene = <el-button class="colors" size="tiny" icon="obicon obicon-scene" title='绑定云端场景' onClick={() => { this.$refs.sceneModal.show(row.id) }}></el-button>
-      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room; this.xiaoduModel.serialId = row.serialId }}></el-button>
+      const xiaodu = <el-button class="colors" size="tiny" icon="obicon obicon-interaction" title='绑定小度' onClick={() => { this.xiaoduVisible = true; this.xiaoduModel.roomNo = row.room; this.xiaoduModel.location = row.id; this.xiaoduModel.serialId = row.serialId }}></el-button>
       const remove = <el-button class="colors" size="tiny" icon="obicon obicon-trash" title='删除房间' onClick={() => this.handleRemove(row)}></el-button>
       // toolbox.push(view)
       toolbox.push(obox)
@@ -300,13 +301,14 @@ export default {
       })
     },
     bindXiaodu () {
-      SystemAPI.bindXiaodu(this.xiaoduModel.roomNo, this.xiaoduModel.serialId).then(res => {
+      SystemAPI.bindXiaodu(this.xiaoduModel.location, [this.xiaoduModel.serialId]).then(res => {
         if (res.status === 200) {
           this.$message({
             type: 'success',
             message: '绑定成功'
           })
           this.xiaoduVisible = false
+          this.getHotelRoomList()
         } else {
           this.$message({
             type: 'error',
@@ -328,6 +330,7 @@ export default {
             message: '解绑成功'
           })
           this.xiaoduVisible = false
+          this.getHotelRoomList()
         } else {
           this.$message({
             type: 'error',
