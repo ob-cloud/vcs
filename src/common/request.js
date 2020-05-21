@@ -78,6 +78,9 @@ export const request = {
   get (url, params = {}, headers) {
     return service(_defaults('GET', url, params, headers))
   },
+  put (url, params = {}, headers = {}) {
+    return service(_defaults('put', url, params, headers))
+  },
   post (url, params = {}, headers = {}) {
     return service(_defaults('post', url, params, headers))
   },
