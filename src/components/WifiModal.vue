@@ -12,6 +12,7 @@
           filterable
           :titles="['未绑定红外', '已绑定红外']"
           :button-texts="['解绑', '绑定']"
+          :render-content="renderFunc"
           :format="{
             noChecked: '${total}',
             hasChecked: '${checked}/${total}'
@@ -113,6 +114,9 @@ export default {
         }
       }).catch(() => { this.bindingLoading = false })
     },
+    renderFunc (h, option) {
+      return <span title={`${option.name} - ${option.deviceId}`}>{ option.name } - { option.deviceId }</span>
+    },
     handleChange (val, direction, currentVal) {
       direction === 'right' ? this.bindWifi(currentVal) : this.unbindWifi(currentVal)
     }
@@ -127,5 +131,10 @@ export default {
 }
 .ui-container{
   text-align: center;
+}
+</style>
+<style lang="scss">
+.ui-container .el-transfer-panel__item.el-checkbox:first-of-type{
+  margin-right: 0;
 }
 </style>
