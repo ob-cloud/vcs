@@ -70,6 +70,8 @@ export default {
         this.getSceneListByRoom()
       } else {
         this.$refs.search.resetFields()
+        this.tableData = []
+        this.transferValue = []
       }
     }
   },

@@ -21,10 +21,10 @@
             <el-button style="float: right; padding: 3px 0" icon="obicon obicon-refresh" title="刷新" @click="refreshSubSwitchList()"></el-button>
           </div>
           <div class="list" :style="{height: height + 'px'}" v-loading="subloading">
-            <div class="sub item" v-for="(item, key) in subSwitchList" :key="key" @click="handleEdit(item)" :title="item.name">
+            <div class="sub item" v-for="(item, key) in subSwitchList" :key="key" @click="handleEdit(item)" :title="`${item.name} - ${item.serialId}`">
               <i class="obicon obicon-edit-o edit" title="编辑" @click.prevent="handleEdit(item)"></i>
               <p><i class="obicon obicon-switch-btn"></i></p>
-              <span>{{item.name}}</span>
+              <span>{{`${item.name} - ${item.serialId}`}}</span>
             </div>
           </div>
         </el-card>
@@ -170,6 +170,7 @@ export default {
     margin: 5px 0;
     text-overflow: ellipsis;
     overflow: hidden;
+    white-space: nowrap;
     transition: all .2s;
     cursor: pointer;
   }

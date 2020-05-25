@@ -51,6 +51,9 @@ export default {
       if (this.drawerVisible) {
         this.getWIFIListByUser()
         this.getWiFiListByRoom()
+      } else {
+        this.transferValue = []
+        this.tableData = []
       }
     }
   },

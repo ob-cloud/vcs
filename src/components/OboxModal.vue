@@ -51,6 +51,9 @@ export default {
       if (this.drawerVisible) {
         this.getAllOboxListByUser()
         this.getAllOboxListByRoom()
+      } else {
+        this.transferValue = []
+        this.tableData = []
       }
     }
   },
