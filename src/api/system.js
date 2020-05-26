@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-02-06 21:34:24
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-05-21 15:36:16
+ * @Last Modified time: 2020-05-26 10:24:19
  */
 
 import {request} from '@/common/request'
@@ -119,6 +119,9 @@ const SystemAPI = {
     return request.delete('/consumer/PmsForDur/unLinkDure', {
       serialId
     })
+  },
+  getSwitchSerialsTree () {
+    return request.get('/consumer/PmsForDur/location/getSocket')
   },
   getSwitchSerials (pageNo = 1, pageSize = 10) {
     return request.get('/consumer/PmsForDur/getSocketDevice', {

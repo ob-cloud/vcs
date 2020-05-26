@@ -1062,6 +1062,14 @@ body.dark{
       background-color: $stroke-dark;
     }
   }
+  .list.tree .el-tree{
+    .el-tree-node__content{
+      &.active,
+      &:hover{
+        background-color: $stroke-dark;
+      }
+    }
+  }
   .list .sub.item{
     box-shadow: 1px 1px 2px $stroke-dark;
     border-color: $stroke-dark!important;
